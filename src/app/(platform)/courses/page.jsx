@@ -12,7 +12,7 @@ export default function CoursesPage({ searchParams }) {
     const [courses, setCourses] = useState([]);
     //Pagination
     const { page } = use(searchParams);
-    const [perPage, setPerPage] = useState(10);
+    const [perPage, setPerPage] = useState();
     let pageNumber = parseInt(page, 10);
     pageNumber = !pageNumber || pageNumber < 1 ? 1 : pageNumber;
     const totalPages = Math.ceil(courseCount / perPage);
