@@ -6,26 +6,13 @@ import { SidebarContext } from "../../../utils/SidebarContext";
 import Link from "next/link";
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import AutoStoriesIcon from '@mui/icons-material/AutoStories';
-import TaskIcon from '@mui/icons-material/Task';
-import ChecklistIcon from '@mui/icons-material/Checklist';
-import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import SearchIcon from '@mui/icons-material/Search';
-import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
-import SendIcon from '@mui/icons-material/Send';
-import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
+import SearchIcon from '@mui/icons-material/Search';
 import { Delete, DeleteIcon, LayoutDashboardIcon, Library, FileCheck, ListCheck, Calendar, House, ReceiptText, MessageSquare, Settings, LogOut } from 'lucide-react'
 import { useAuth } from '@/app/utils/AuthContext';
+import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
 import { useRouter } from "next/navigation";
 const PROFILE_SRC = '/assets/Testmonial1.png';
 import toast, { Toaster } from 'react-hot-toast';
@@ -56,8 +43,8 @@ export default function DashboardLayout({ children }) {
     const [isDropdown, setDropdown] = useState(false);
     const { user, logoutUser } = useAuth();
     const isActive = (path) => pathname === path || pathname.startsWith(path + '/');
-
     return (
+
         <div className="flex h-screen bg-white">
             {/* Sidebar */}
             <aside className={`max-h-full transition-all duration-400 ease-in-out ${isCollapsed ? 'w-20' : 'w-64'} bg-white border-r border-gray-200 flex flex-col my-2 relative`}>

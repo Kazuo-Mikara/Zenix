@@ -9,7 +9,7 @@ const Footer = () => {
                 <div>
                     <div className="flex items-center space-x-2">
                         {/* <img classNameName="w-10 h-10 rounded-full" src={logo} alt="logo" /> */}
-                        <h1 className="text-2xl font-bold text-gray-800">ZenEd</h1>
+                        <h1 className="text-2xl font-bold text-gray-800">Zenix</h1>
                     </div>
                     <p className="text-gray-600 mt-4">A modern learning platform designed for everyone.</p>
                     <div className="flex space-x-4 mt-4 text-gray-600">
@@ -48,7 +48,7 @@ const Footer = () => {
                 </div>
             </div>
             <div className="mt-8 border-t pt-6 text-center text-gray-500 text-sm">
-                <p>© 2025 ZenEd. <span className='font-bold text-primary'>All Rights Reserved</span></p>
+                <p>© 2025 Zenix. <span className='font-bold text-primary'>All Rights Reserved</span></p>
             </div>
         </footer>
     )

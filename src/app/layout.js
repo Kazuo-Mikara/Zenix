@@ -1,8 +1,9 @@
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
-import SidebarRootClient from "../components/SidebarRootClient";
 
+import QueryProvider from "@/app/QueryProvider";
 import { AuthProvider } from "@/app/utils/AuthContext";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -25,11 +26,11 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <SidebarRootClient>
+        <QueryProvider>
+          <AuthProvider>
             {children}
-          </SidebarRootClient>
-        </AuthProvider>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

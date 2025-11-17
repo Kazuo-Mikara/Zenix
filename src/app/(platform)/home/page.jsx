@@ -21,8 +21,8 @@ const Home = () => {
     return (
         <>
             <div className="z-0 bg-gray-50">
-                <div className="w-full mx-auto bg-white shadow-lg rounded-lg ">
-                    <main className=" md:p-12">
+                <div className=" bg-white shadow-lg rounded-lg ">
+                    <main className="p-12">
                         <section className="text-center">
                             <div class="relative">
                                 <p class="text-primary font-semibold">START TO SUCCESS</p>
@@ -241,14 +241,14 @@ const Home = () => {
                                 </div>
                                 <div className="border rounded-lg">
                                     <button className="w-full flex justify-between items-center p-4 font-semibold text-gray-700">
-                                        <span>What is "ZenEd Behind?" mean?</span>
+                                        <span>What is &ldquo;ZenEd Behind?&ldquo; mean?</span>
                                         <span className="material-symbols-outlined"><MdExpandMore /></span>
                                     </button>
                                 </div>
                             </div>
                         </section>
                     </main>
-                    <Footer />
+
                 </div>
 
             </div>

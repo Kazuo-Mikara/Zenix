@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { use } from 'react'
 import axios from 'axios'
 const course = ({ searchParams }) => {
@@ -29,7 +30,7 @@ const course = ({ searchParams }) => {
                 !loading && (
                     <div class="flex w-full max-w-7xl flex-col gap-8 px-4 sm:px-6 lg:px-8">
                         <div class="flex flex-col gap-4">
-                            <h1 class="text-primary text-3xl md:text-4xl font-poppins lg:text-5xl font-black leading-tight tracking-tight max-w-4xl">{course.title}</h1>
+                            <h1 class="text-primary text-2xl md:text-2xl font-sans lg:text-4xl font-black leading-normal tracking-tight max-w-4xl">{course.title}</h1>
                             <p class="text-slate-600 dark:text-slate-400 text-base md:text-lg font-normal leading-normal">{course.instructor}</p>
                             <div class="flex items-center gap-2 text-slate-700 dark:text-slate-300">
                                 <span class="font-nunito">Duration</span>
@@ -108,7 +109,7 @@ const course = ({ searchParams }) => {
                             <div class="lg:sticky top-28 h-fit flex flex-col gap-6">
                                 <div class="rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-slate-800 p-6 flex flex-col gap-5 shadow-sm">
                                     <button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-base font-bold leading-normal transition-colors hover:bg-primary/90">
-                                        <span>Enroll Now</span>
+                                        <Link href={`${course.link}`}>Enroll Now</Link>
                                     </button>
                                     <button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-accent text-primary hover:underline text-base font-bold leading-normal transition-colors hover:bg-accent/90">
                                         <span>Download Program Brochure</span>

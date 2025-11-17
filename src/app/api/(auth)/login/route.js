@@ -87,7 +87,7 @@ export async function POST(request) {
             httpOnly: true, // Crucial: Prevents client-side JS access (XSS defense)
             secure: false, // Set to false for development to ensure cookie is sent
             sameSite: 'lax', // More permissive for development
-            maxAge: 60 * 60 * 1, // 1 hour (matches token expiration)
+            maxAge: 60 * 60 * 24 * 7, // a week (matches token expiration)
             path: '/',
         });
 

@@ -5,14 +5,16 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true },
     password: { type: String, required: true, select: false },
     createdAt: { type: Date, default: Date.now },
-    enrolledCourses: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'SkillShare'
-        }
-    ]
+    gender: { type: String, default: 'male' }
 })
 
 const User = mongoose.models.User || mongoose.model('User', userSchema)
 
 export default User;
+
+
+// enrolledCourses: [
+//     {
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: 'SkillShare'
+//     }
