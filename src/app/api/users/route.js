@@ -1,5 +1,5 @@
 import dbConnect from '@/lib/mongoose';
-import User from '@/models/User';
+import User from '@/models/Users/User';
 const countUsers = async () => {
     const user_count = await User.countDocuments();
     const male_users = await User.find({ gender: 'Male' }).countDocuments();
