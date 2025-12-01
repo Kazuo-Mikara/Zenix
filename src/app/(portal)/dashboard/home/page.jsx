@@ -8,6 +8,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useAuth } from '@/utils/(user)/UserAuthContext';
 export default function HomePage() {
     const { user } = useAuth();
+    console.log(user)
     return (
         <div className="flex-1 overflow-y-auto p-6 bg-white">
             <div className="flex justify-between items-center mb-6">

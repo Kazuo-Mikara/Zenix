@@ -172,6 +172,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     pages: {
         signIn: "/admin_dashboard/auth/login", // Redirect here for protected routes
     },
-
+    trustHost: true, // Important for Vercel
     secret: process.env.AUTH_SECRET,
 });
