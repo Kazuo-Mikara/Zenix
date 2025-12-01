@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongoose";
-import User from "@/models/Users/User";
+import Users from "@/models/Users/User";
 
 export async function POST(request) {
     try {
@@ -11,18 +11,18 @@ export async function POST(request) {
             const sortOptions = sortField
                 ? { [sortField]: sortOrder === 'desc' ? -1 : 1 }
                 : {}; // default DB order
-            const users = await User.find()
+            const users = await Users.find()
                 .sort(sortOptions)
                 .skip((page - 1) * perPage)
                 .limit(perPage)
                 .lean();
-            const userCount = await User.countDocuments();
+            const userCount = await Users.countDocuments();
             return NextResponse.json({ users, userCount }, { status: 201 });
         }
 
         else if (getUsers) {
-            const users = await User.find().sort({}).lean();
-            const userCount = await User.countDocuments();
+            const users = await Users.find().sort({}).lean();
+            const userCount = await Users.countDocuments();
             return NextResponse.json({ userCount }, { status: 201 });
         }
 

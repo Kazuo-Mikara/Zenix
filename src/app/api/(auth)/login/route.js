@@ -1,6 +1,6 @@
 // app/api/login/route.js
 import dbConnect from '@/lib/mongoose';
-import User from '@/models/Users/User';
+import Users from '@/models/Users/User';
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 
@@ -39,7 +39,7 @@ export async function POST(request) {
             );
         }
 
-        const user = await User.findOne({ email: email.toLowerCase() });
+        const user = await Users.findOne({ email: email.toLowerCase() });
 
         let isPasswordValid = false;
         if (user) {
@@ -70,7 +70,7 @@ export async function POST(request) {
 
         const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: JWT_EXPIRATION });
 
-        await User.updateOne(
+        await Users.updateOne(
             { _id: user._id },
             {
                 $set: {

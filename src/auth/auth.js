@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import dbConnect from "../lib/mongoose";
-import User from "../models/Users/User";
+import Users from "@/models/Users/User";
 import Admin from "@/models/Admin/Admin";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -54,7 +54,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             authorize: async (credentials) => {
                 await dbConnect();
 
-                const user = await User.findOne({ email: credentials.email.toLowerCase() });
+                const user = await Users.findOne({ email: credentials.email.toLowerCase() });
 
                 if (!user) return null;
 
@@ -86,7 +86,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             authorize: async (credentials) => {
                 await dbConnect();
 
-                const user = await User.findOne({ email: credentials.email.toLowerCase() });
+                const user = await Users.findOne({ email: credentials.email.toLowerCase() });
 
                 if (!user) return null;
 
