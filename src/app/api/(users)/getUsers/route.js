@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongoose";
-import User from "@/models/User";
+import User from "@/models/Users/User";
 
 export async function POST(request) {
     try {
