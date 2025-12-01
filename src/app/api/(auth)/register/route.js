@@ -1,6 +1,6 @@
 import { hashPassword } from "@/utils/password_hash";
 import dbConnect from "../../../../lib/mongoose";
-import User from "../../../../models/User";
+import Users from '@/models/Users/User';
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
@@ -16,14 +16,14 @@ export async function POST(request) {
             return NextResponse.json({ error: "email and password are required" }, { status: 400 });
         }
 
-        const existingUser = await User.findOne({ email });
+        const existingUser = await Users.findOne({ email });
         if (existingUser) {
             return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 });
         }
 
         const hashedPassword = await hashPassword(password);
         // construct with an object so fields map correctly to schema
-        const userDoc = new User({ name, email, password: hashedPassword });
+        const userDoc = new Users({ name, email, password: hashedPassword });
         await userDoc.save();
 
         // convert to plain object and remove sensitive fields before returning
