@@ -1,16 +1,12 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google";
 import dbConnect from "../lib/mongoose";
 import Users from "@/models/Users/User";
 import Admin from "@/models/Admin/Admin";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
-        Google({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        }),
+
         // Admin Provider
         Credentials({
             id: "admin",
@@ -174,7 +170,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     trustHost: true, // Important for Vercel
     secret: process.env.AUTH_SECRET,
-    ...(process.env.NEXTAUTH_URL && {
-        url: process.env.NEXTAUTH_URL,
-    }),
 });
