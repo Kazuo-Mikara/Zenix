@@ -1,6 +1,6 @@
 // models/user.model.js
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs'); // For password hashing
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs'; // For password hashing
 
 const enrollmentSchema = new mongoose.Schema({
     courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },

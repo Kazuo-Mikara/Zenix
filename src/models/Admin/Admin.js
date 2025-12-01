@@ -1,7 +1,6 @@
-// models/user.model.js
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs'); // For password hashing
-
+// models/admin.model.js
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs'; // For password hashing
 
 const adminSchema = new mongoose.Schema({
     userName: { type: String, required: true, trim: true },
