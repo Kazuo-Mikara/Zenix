@@ -1,3 +1,4 @@
+'use client'
 import { FileExclamationPointIcon } from "lucide-react";
 // Mock the Dialog components
 const Dialog = ({ open, onClose, children, className }) =>
@@ -10,7 +11,7 @@ const DialogTitle = ({ as, children, className }) =>
     <h3 className={className}>{children}</h3>;
 
 
-const CancelModalComponent = ({ open, setOpen, handleCancel }) => {
+const CancelModalComponent = ({ open, setOpen, handleCancel, message, sub_message }) => {
 
 
     return (
@@ -51,9 +52,14 @@ const CancelModalComponent = ({ open, setOpen, handleCancel }) => {
                                         </DialogTitle>
                                         <div className="mt-2">
                                             <p className="text-sm text-gray-600">
-                                                Are you sure you want to go back without adding Course?
+                                                {message}
                                                 <br />
-                                                {/* <strong className="text-red-700">This action cannot be undone.</strong> */}
+                                                {
+                                                    sub_message && (
+                                                        <strong className="text-red-700">This action cannot be undone.</strong>
+
+                                                    )
+                                                }
                                             </p>
                                         </div>
                                     </div>

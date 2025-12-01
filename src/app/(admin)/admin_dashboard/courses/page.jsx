@@ -65,40 +65,35 @@ const page = () => {
     }
 
     // --- React Query Fetching ---
-    // Added refetch to the data destructuring to ensure it's available if needed, though not strictly required for this fix.
+
     const { data: data = { courses: [], courseCount: 0 }, isLoading, isError, refetch } = useQuery({
-        // Query key changes whenever pageNumber, currentPerPage, sortField, or sortOrder changes,
-        // triggering a new fetch based on the URL state.
         queryKey: ['courses', currentPerPage, pageNumber, sortField, sortOrder],
         queryFn: () => getCourses({
             page: pageNumber,
             perPage: currentPerPage,
-            coursePlatform: coursePlatform,
             sortField: sortField,
             sortOrder: sortOrder === 'default' ? null : sortOrder,
         }),
     });
-    // 2. State for the filtered list displayed to the user
+    //  State for the filtered list displayed to the user
     const [filteredCourses, setFilteredCourses] = useState(data.courses);
-    // 3. State for the current value in the search input field
+    //  State for the current value in the search input field
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleSearch = (query) => {
-        // 1. Update the search term state immediately
+        //Update the search term state immediately
         setSearchTerm(query);
 
-        // 2. Normalize the query for case-insensitive searching
         const normalizedQuery = query.toLowerCase().trim();
-
         if (normalizedQuery === '') {
-            // If the search field is empty, show the original, full list
+
             setFilteredCourses(data.courses);
             return;
         }
 
-        // 3. Filter the original dataset (courses)
+        // Filter the original dataset (courses)
         const results = data.courses.filter(course => {
-            // Check if the query is found in the title, instructor, or category
+
             return (
                 course.title.toLowerCase().includes(normalizedQuery) ||
                 course.instructor.toLowerCase().includes(normalizedQuery)
@@ -107,7 +102,7 @@ const page = () => {
             );
         });
 
-        // 4. Update the display list with the new results
+        // Update the display list with the new results
         setFilteredCourses(results);
     };
 
@@ -118,14 +113,16 @@ const page = () => {
     // Update the total course count whenever new data is fetched
     useEffect(() => {
         if (data && data.courseCount !== undefined) {
-            setCourseCount(data.courseCount);
-            setFilteredCourses(data.courses);
+            setCourseCount(prevCount =>
+                prevCount !== data.courseCount ? data.courseCount : prevCount
+            );
+            setFilteredCourses(prevCourse =>
+                JSON.stringify(prevCourse) !== JSON.stringify(data.courses)
+                    ? data.courses : prevCourse
+            );
         }
     }, [data]);
 
-    // --- Handlers for URL Manipulation (Sorting and Per Page) ---
-
-    // Function to handle changes to the number of items per page
     const handlePerPageChange = (newPerPage) => {
         const params = new URLSearchParams(searchParams.toString());
         params.set('perPage', newPerPage);
@@ -366,7 +363,7 @@ const page = () => {
                                     </td>
                                     <td className='px-6 py-4 flex space-x-2'>
                                         <Link
-                                            href={`/admin_dashboard/courses/edit?id=${course._id}`}
+                                            href={`/admin_dashboard/courses/edit/id=${course._id}`}
                                             className="p-2 text-primary-200 rounded-lg hover:bg-indigo-50 transition"
                                             title="Edit Course"
                                         >

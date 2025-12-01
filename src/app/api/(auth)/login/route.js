@@ -1,108 +1,141 @@
-import dbConnect from '../../../../lib/mongoose';
-import User from '../../../../models/User';
-import { verifyPassword } from '@/utils/password_hash';
+// app/api/login/route.js
+import dbConnect from '@/lib/mongoose';
+import User from '@/models/Users/User';
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 
-/**a
- * Handles POST requests for user sign-in/login, generates a JWT,
- * and sets it as a secure HTTP-only cookie.
- * Path: /api/auth/signin
- */
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRATION = '3d';
+const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 3;
+const isProduction = process.env.NODE_ENV === 'production';
+
 export async function POST(request) {
     try {
-        // 1. Get Secret and Connect
-        const JWT_SECRET = process.env.JWT_SECRET;
         if (!JWT_SECRET) {
             console.error('JWT_SECRET is not defined!');
-            return NextResponse.json({ error: 'Server configuration error.' }, { status: 500 });
+            return NextResponse.json(
+                { success: false, error: 'Server configuration error: JWT_SECRET missing.' },
+                { status: 500 }
+            );
         }
 
         await dbConnect();
 
-        const { email, password } = await request.json();
-        // const { email, password } = await userInfo
+        const body = await request.json();
+        const { email, password } = body;
 
         if (!email || !password) {
             return NextResponse.json(
-                { error: 'Email and password are required' },
+                { success: false, error: 'Email and password are required' },
                 { status: 400 }
             );
         }
 
-        // 2. Find the user (need the password hash to verify)
-        const user = await User.findOne({ email }).select('+password');
-
-        if (!user) {
-            // Use generic error message for security
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
             return NextResponse.json(
-                { error: 'Invalid credentials' },
+                { success: false, error: 'Invalid email format' },
+                { status: 400 }
+            );
+        }
+
+        const user = await User.findOne({ email: email.toLowerCase() });
+
+        let isPasswordValid = false;
+        if (user) {
+            isPasswordValid = await user.comparePassword(password);
+        }
+
+        if (!user || !isPasswordValid) {
+            return NextResponse.json(
+                { success: false, error: 'Invalid credentials' },
                 { status: 401 }
             );
         }
 
-        // 3. Verify the password
-        const isPasswordValid = await verifyPassword(password, user.password);
-
-        if (!isPasswordValid) {
-            // Use generic error message for security
+        if (user.status && (user.status === 'inactive' || user.status === 'banned')) {
             return NextResponse.json(
-                { error: 'Invalid credentials' },
-                { status: 401 }
+                { success: false, error: 'Your account is not active. Please contact support.' },
+                { status: 403 }
             );
         }
 
-        // --- JWT GENERATION AND SESSION MANAGEMENT ---
-
-        // 4. Generate JWT
         const tokenPayload = {
-            userId: user._id.toString(), // Convert ObjectId to string
-            email: user.email
+            userId: user._id.toString(),
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role || 'user',
         };
-        const tokenOptions = { expiresIn: '1h' }; // Token expires in 1 hour
 
-        const token = jwt.sign(tokenPayload, JWT_SECRET, tokenOptions);
+        const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: JWT_EXPIRATION });
 
-        // 5. Save the token to the user document in MongoDB
-        // This tracks the current session token on the server side.
         await User.updateOne(
             { _id: user._id },
-            { $set: { sessionToken: token } }
+            {
+                $set: {
+                    sessionToken: token,
+                    lastLogin: new Date(),
+                    loginAttempts: 0
+                }
+            }
         );
 
-        // 6. Create success response object
+        const userDataForClient = {
+            userId: user._id.toString(),
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role || 'user',
+        };
+
         const response = NextResponse.json(
             {
+                success: true,
                 message: 'Sign-in successful',
-                userId: user._id,
-                email: user.email,
-                name: user.name
-                // The token is sent via cookie, not in the body, for security
+                user: userDataForClient,
             },
             { status: 200 }
         );
 
-        // 7. Set the JWT in a secure HTTP-only cookie
         response.cookies.set('authToken', token, {
-            httpOnly: true, // Crucial: Prevents client-side JS access (XSS defense)
-            secure: false, // Set to false for development to ensure cookie is sent
-            sameSite: 'lax', // More permissive for development
-            maxAge: 60 * 60 * 24 * 7, // a week (matches token expiration)
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? 'strict' : 'lax',
+            maxAge: COOKIE_MAX_AGE_SECONDS,
             path: '/',
         });
 
         return response;
 
     } catch (error) {
-        console.error('Sign-in error:', error);
+        console.error('Sign-in API error:', error);
 
-        // Handle Mongoose validation errors
-        if (error.name === 'ValidationError') {
-            const messages = Object.values(error.errors).map(val => val.message);
-            return NextResponse.json({ error: messages.join(', ') }, { status: 400 });
+        if (error.name === 'MongoError' || error.name === 'MongooseError') {
+            return NextResponse.json(
+                { success: false, error: 'Database connection error. Please try again later.' },
+                { status: 500 }
+            );
         }
 
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-    }
+        if (error.name === 'JsonWebTokenError') {
+            return NextResponse.json(
+                { success: false, error: 'Error generating authentication token.' },
+                { status: 500 }
+            );
+        }
 
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(err => err.message);
+            return NextResponse.json(
+                { success: false, error: `Validation failed: ${messages.join(', ')}` },
+                { status: 400 }
+            );
+        }
+
+        return NextResponse.json(
+            { success: false, error: 'An unexpected error occurred during login.' },
+            { status: 500 }
+        );
+    }
 }

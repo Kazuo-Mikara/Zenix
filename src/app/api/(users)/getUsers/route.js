@@ -11,22 +11,19 @@ export async function POST(request) {
             const sortOptions = sortField
                 ? { [sortField]: sortOrder === 'desc' ? -1 : 1 }
                 : {}; // default DB order
-
-
             const users = await User.find()
                 .sort(sortOptions)
                 .skip((page - 1) * perPage)
                 .limit(perPage)
                 .lean();
             const userCount = await User.countDocuments();
-            console.log(users)
             return NextResponse.json({ users, userCount }, { status: 201 });
         }
 
         else if (getUsers) {
             const users = await User.find().sort({}).lean();
             const userCount = await User.countDocuments();
-            return NextResponse.json({ users, userCount }, { status: 201 });
+            return NextResponse.json({ userCount }, { status: 201 });
         }
 
 

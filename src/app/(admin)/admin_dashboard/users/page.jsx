@@ -3,55 +3,45 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import getUsers from '@/helpers/(admin)/users/getAllUsers';
-import deleteCourse from '@/helpers/(admin)/courses/deleteCourse';
+import deleteUser from '@/helpers/(admin)/users/deleteUser';
 import Loading from '../../components/loading';
 import { useRouter, } from 'next/navigation';
 import { toast, Toaster } from 'react-hot-toast'
 import { Trash2, Pencil, ArrowUp, ArrowDown, ArrowUpDown, SearchIcon, DeleteIcon } from 'lucide-react';
-// --- Placeholder/Mock Dependencies for compilation ---
+import CancelModalComponent from '../../components/CancelModalComponent';
 
-// Mocking Next.js hooks for this environment
-// const useRouter = () => ({ push: (url) => console.log('Simulating navigation to:', url) });
+// Your existing mock components and functions...
 const useSearchParams = () => {
-    // Mocking search params for the common cases
     const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
     return params;
 };
-const usePathname = () => (typeof window !== 'undefined' ? window.location.pathname : '/admin_dashboard/courses');
+const usePathname = () => (typeof window !== 'undefined' ? window.location.pathname : '/admin_dashboard/users');
 
-
-
-// Mocking the getCourses API call helper
-
-// Mocking the Link component to use standard anchor tags
 const Link = ({ href, children, ...props }) => (
     <a href={href} {...props}>{children}</a>
 );
 
-// Lucide icons
-
-
 const page = () => {
     const router = useRouter();
-    // --- Hooks ---
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
     // State for filtering
     const [coursePlatform] = useState('Total');
-
-    // State for total count (updated after data fetch)
     const [userCount, setUserCount] = useState(0);
     const [isDeleting, setIsDeleting] = useState(false);
-    // Read URL parameters for current state
+
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState(null); // **Track selected user ID**
+    const [selectedUserName, setSelectedUserName] = useState(''); // **Track user name for display**
+
+    // Read URL parameters
     const pageNumber = parseInt(searchParams.get('page')) || 1;
     const sortField = searchParams.get('sortField');
     const sortOrder = searchParams.get('sortOrder') || 'default';
     const currentPerPage = parseInt(searchParams.get('perPage')) || 25;
-    // const [currentPerPage, setCurrentPerPage] = useState(25);
 
-    // --- Pagination Calculation (Derived State) ---
-    // Use courseCount from state, defaulting to 0
+    // Pagination calculation
     const totalPages = Math.ceil(userCount / currentPerPage);
     const prevPage = pageNumber - 1 > 0 ? pageNumber - 1 : 1;
     const nextPage = pageNumber + 1;
@@ -64,11 +54,8 @@ const page = () => {
         }
     }
 
-    // --- React Query Fetching ---
-    // Added refetch to the data destructuring to ensure it's available if needed, though not strictly required for this fix.
+    // React Query Fetching
     const { data: data = { users: [], userCount: 0 }, isLoading, isError, refetch } = useQuery({
-        // Query key changes whenever pageNumber, currentPerPage, sortField, or sortOrder changes,
-        // triggering a new fetch based on the URL state.
         queryKey: ['users', currentPerPage, pageNumber, sortField, sortOrder],
         queryFn: () => getUsers({
             page: pageNumber,
@@ -78,36 +65,28 @@ const page = () => {
             sortOrder: sortOrder === 'default' ? null : sortOrder,
         }),
     });
-    // 2. State for the filtered list displayed to the user
+
+    // Search states
     const [filteredUsers, setFilteredUsers] = useState(data.users);
-    // 3. State for the current value in the search input field
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleSearch = (query) => {
-        // 1. Update the search term state immediately
         setSearchTerm(query);
-
-        // 2. Normalize the query for case-insensitive searching
         const normalizedQuery = query.toLowerCase().trim();
 
         if (normalizedQuery === '') {
-            // If the search field is empty, show the original, full list
             setFilteredUsers(data.users);
             return;
         }
 
-        // 3. Filter the original dataset (courses)
-        const results = data.users.filter(course => {
-            // Check if the query is found in the title, instructor, or category
+        const results = data.users.filter(user => {
             return (
-                user.name.toLowerCase().includes(normalizedQuery) ||
+                user.firstName?.toLowerCase().includes(normalizedQuery) ||
+                user.lastName?.toLowerCase().includes(normalizedQuery) ||
                 user.email.toLowerCase().includes(normalizedQuery)
-                // course.category.toLowerCase().includes(normalizedQuery)
-                // console.log(course)
             );
         });
 
-        // 4. Update the display list with the new results
         setFilteredUsers(results);
     };
 
@@ -115,42 +94,58 @@ const page = () => {
         setSearchTerm('');
         setFilteredUsers(data.users)
     }
-    // Update the total course count whenever new data is fetched
+
+    // Update data when fetched
     useEffect(() => {
         if (data && data.userCount !== undefined) {
-            setUserCount(data.userCount);
-            setFilteredUsers(data.users);
+            setUserCount(prevCount =>
+                prevCount !== data.userCount ? data.userCount : prevCount
+            );
+            setFilteredUsers(prevUsers =>
+                JSON.stringify(prevUsers) !== JSON.stringify(data.users)
+                    ? data.users : prevUsers
+            );
         }
     }, [data]);
 
-    // --- Handlers for URL Manipulation (Sorting and Per Page) ---
-
-    // Function to handle changes to the number of items per page
     const handlePerPageChange = (newPerPage) => {
         const params = new URLSearchParams(searchParams.toString());
         params.set('perPage', newPerPage);
         params.set('page', 1);
         router.push(`${pathname}?${params.toString()}`);
     };
-    const handleDelete = async (courseId) => {
-        if (!window.confirm('Are you sure you want to delete this course?')) {
+
+
+    const handleOpenModal = (userId, userName) => {
+        setSelectedUserId(userId);
+        setSelectedUserName(userName);
+        setOpenDeleteModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setOpenDeleteModal(false);
+        setSelectedUserId(null);
+        setSelectedUserName('');
+    };
+    // console.log(selectedUserId)
+    const handleDelete = async () => {
+        if (!selectedUserId) {
+            toast.error('No user selected for deletion');
             return;
         }
 
         try {
             setIsDeleting(true);
-
-            const result = await deleteCourse(courseId);
-
+            const result = await deleteUser(selectedUserId);
             if (result.success) {
-                // Manually trigger a refetch
                 await refetch();
-                toast.success('Course deleted successfully!');
+                toast.success('User deleted successfully!');
+                handleCloseModal();
             } else {
-                toast.error(result.message);
+                toast.error(result.message || 'Failed to delete user');
             }
         } catch (error) {
-            toast.error(error.message || 'Failed to delete course');
+            toast.error(error.message || 'Failed to delete user');
         } finally {
             setIsDeleting(false);
         }
@@ -163,19 +158,16 @@ const page = () => {
         let newSortField = field;
 
         if (sortField === field) {
-            // If clicking the current sorted field, cycle the order
             if (sortOrder === 'asc') {
                 newSortOrder = 'desc';
             } else if (sortOrder === 'desc') {
-                // If currently descending, reset the sort (default state)
                 newSortField = null;
                 newSortOrder = 'default';
-            } else { // Current is 'default'
+            } else {
                 newSortOrder = 'asc';
             }
         }
 
-        // Update URL parameters
         if (newSortField) {
             params.set('sortField', newSortField);
         } else {
@@ -188,26 +180,19 @@ const page = () => {
             params.delete('sortOrder');
         }
 
-        // Reset to page 1 when sorting changes
         params.set('page', 1);
-
         router.push(`${pathname}?${params.toString()}`);
     };
 
-    // Function to create pagination Link URLs
     const createPageUrl = (page) => {
         const params = new URLSearchParams(searchParams.toString());
         params.set('page', page);
         return `${pathname}?${params.toString()}`;
     };
 
-    // --- Loading and Error States ---
     if (isLoading) return <Loading />;
-    if (isError) return <p className="text-center text-red-500 mt-10">Failed to load courses. (Mock Error)</p>;
+    if (isError) return <p className="text-center text-red-500 mt-10">Failed to load users.</p>;
 
-    // --- Render Logic ---
-
-    // Helper to get the correct sort icon
     const getSortIcon = (field) => {
         if (sortField !== field || sortOrder === 'default') {
             return <ArrowUpDown size={18} className="w-4 h-4 text-gray-400 group-hover:text-gray-700" />;
@@ -223,7 +208,6 @@ const page = () => {
 
     return (
         <div className='w-full'>
-
             <h1 className="text-3xl font-bold text-center text-gray-800">
                 Total Users ({userCount})
             </h1>
@@ -233,10 +217,7 @@ const page = () => {
                     position="top-right"
                     reverseOrder={false}
                     gutter={8}
-                    containerClassName=""
-                    containerStyle={{}}
                     toastOptions={{
-                        // Define default options
                         className: 'text-sm',
                         duration: 4000,
                         style: {
@@ -258,23 +239,31 @@ const page = () => {
                         },
                     }}
                 />
-                {/* Controls: Add Course and Per Page Buttons */}
-                <div className='flex flex-wrap justify-between items-center my-4 '>
-                    <div className='flex gap-5'>
 
+                <CancelModalComponent
+                    open={openDeleteModal}
+                    setOpen={handleCloseModal}
+                    handleCancel={handleDelete}
+                    isLoading={isDeleting}
+                    message={`Are you sure you want to delete ${selectedUserName}?`}
+                    sub_message="This action cannot be undone."
+                />
+
+                {/* Controls */}
+                <div className='flex flex-wrap justify-between items-center my-4'>
+                    <div className='flex gap-5'>
                         <Link
-                            href={`/admin_dashboard/courses/add`}
+                            href={`/admin_dashboard/users/add`}
                             className='bg-primary-200 text-white px-4 py-3 rounded-lg text-sm font-medium shadow-md hover:bg-primary-500 transition'
                         >
-                            Add Course
+                            Add User
                         </Link>
                         <div className="relative">
-                            <div className="flex justify-center group   items-center border-2 focus:outline-1 bg-gray-100 gap-2 rounded-lg px-3 py-2">
+                            <div className="flex justify-center group items-center border-2 focus:outline-1 bg-gray-100 gap-2 rounded-lg px-3 py-2">
                                 <SearchIcon fontSize="small" className="text-gray-500 mr-2" />
                                 <input
                                     type="text"
-                                    placeholder="Search by title,instructor or tags"
-                                    // 2. Bind value and change handler
+                                    placeholder="Search by name or email"
                                     value={searchTerm}
                                     onChange={(e) => handleSearch(e.target.value)}
                                     className="bg-transparent border-none outline-none w-52 text-sm placeholder:text-sm placeholder:text-gray-500 transition-all duration-300 ease-in-out"
@@ -306,98 +295,106 @@ const page = () => {
                     </div>
                 </div>
 
-                {/* Course Table */}
+                {/* Users Table */}
                 <div className="bg-white rounded-xl shadow-lg border border-gray-100">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                         <thead className="text-xs text-gray-700 capitalize bg-gray-50 border-b">
                             <tr>
                                 <th scope="col" className="px-6 py-3 font-semibold">No</th>
                                 <th scope="col" className="px-6 py-3 font-semibold">
-                                    {/* Sortable Header Button */}
                                     <button
-                                        onClick={() => handleSortClick('title')}
+                                        onClick={() => handleSortClick('firstName')}
                                         className="flex items-center gap-1 group focus:outline-none"
                                     >
-                                        Username
-                                        {getSortIcon('title')}
+                                        First Name
+                                        {getSortIcon('firstName')}
                                     </button>
                                 </th>
                                 <th scope="col" className="px-6 py-3 font-semibold">
                                     <button
-                                        onClick={() => handleSortClick('title')}
+                                        onClick={() => handleSortClick('lastName')}
+                                        className="flex items-center gap-1 group focus:outline-none"
+                                    >
+                                        Last Name
+                                        {getSortIcon('lastName')}
+                                    </button>
+                                </th>
+                                <th scope="col" className="px-6 py-3 font-semibold">
+                                    <button
+                                        onClick={() => handleSortClick('email')}
                                         className="flex items-center gap-1 group focus:outline-none"
                                     >
                                         Email
-                                        {getSortIcon('instructor')}
+                                        {getSortIcon('email')}
                                     </button>
                                 </th>
-                                <th scope="col" className="px-6 py-3 font-semibold">
-                                    <button
-                                        onClick={() => handleSortClick('title')}
-                                        className="flex items-center gap-1 group focus:outline-none"
-                                    >
-                                        Gender
-                                        {getSortIcon('instructor')}
-                                    </button>
-                                </th>
-                                <th scope="col" className="px-6 py-3 font-semibold">
-                                    Created At
-                                </th>
-                                <th scope="col" className="px-6 py-3 font-semibold">
-                                    Actions
-                                </th>
+                                <th scope="col" className="px-6 py-3 font-semibold">Role</th>
+                                <th scope="col" className="px-6 py-3 font-semibold">Status</th>
+                                <th scope="col" className="px-6 py-3 font-semibold">Created At</th>
+                                <th scope="col" className="px-6 py-3 font-semibold">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {/* Check if data.courses is available and render rows */}
                             {filteredUsers.map((user, index) => (
-
-                                <tr key={user._id} className='bg-white border-b hover:bg-gray-50' >
+                                <tr key={user._id} className='bg-white border-b hover:bg-gray-50'>
                                     <td className="px-6 py-4">
                                         {(pageNumber - 1) * currentPerPage + index + 1}
                                     </td>
                                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                        {user.name}
+                                        {user.firstName}
+                                    </th>
+                                    <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                        {user.lastName}
                                     </th>
                                     <td className="px-6 py-4">{user.email}</td>
-                                    <td className="px-6 py-4">{user.gender}</td>
                                     <td className="px-6 py-4">
-                                        {/* Use actual course date and format it */}
-                                        {
-                                            user.createdAt ?
-                                                new Date(user.createdAt).toLocaleTimeString("en-US", {
-                                                    hour: "numeric",
-                                                    year: "numeric",
-                                                    month: "short",
-                                                    day: "numeric"
-                                                })
-                                                : 'NA'
+                                        <span className='px-2 py-1 rounded-full text-xs font-medium' >
+                                            {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${user.status === 'active' ? 'bg-green-100 text-green-800 border border-green-200' :
+                                            user.status === 'inactive' ? 'bg-red-100 text-red-800 border border-red-200' :
+                                                'bg-yellow-100 text-yellow-800 border border-yellow-200'
+                                            }`}>
+                                            {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {user.createdAt ?
+                                            new Date(user.createdAt).toLocaleTimeString("en-US", {
+                                                hour: "numeric",
+                                                year: "numeric",
+                                                month: "short",
+                                                day: "numeric"
+                                            })
+                                            : 'NA'
                                         }
                                     </td>
                                     <td className='px-6 py-4 flex space-x-2'>
                                         <Link
                                             href={`/admin_dashboard/users/edit/id=${user._id}`}
                                             className="p-2 text-primary-200 rounded-lg hover:bg-indigo-50 transition"
-                                            title="Edit Course"
+                                            title="Edit User"
                                         >
                                             <Pencil size={18} />
                                         </Link>
                                         <button
-                                            onClick={() => handleDelete(user._id)}
+                                            onClick={() => handleOpenModal(user._id, `${user.firstName} ${user.lastName}`)}
                                             className="p-2 text-red-600 rounded-lg hover:bg-red-50 transition"
-                                            title="Delete Course"
+                                            title="Delete User"
+                                            disabled={isDeleting}
                                         >
                                             <Trash2 size={18} />
                                         </button>
                                     </td>
-
                                 </tr>
                             ))}
-                            {/* Display message if no courses are found */}
-                            {!filteredUsers && data.users.length === 0 && (
+
+                            {filteredUsers.length === 0 && (
                                 <tr>
-                                    <td colSpan="5" className="text-center py-8 text-gray-500">
-                                        No courses found for this platform or filter.
+                                    <td colSpan="7" className="text-center py-8 text-gray-500">
+                                        No users found.
                                     </td>
                                 </tr>
                             )}
@@ -409,7 +406,6 @@ const page = () => {
             {/* Pagination Controls */}
             <div className="flex justify-end mr-10 mt-6">
                 <div className="flex items-center space-x-2 p-4">
-                    {/* Previous Page Link */}
                     {pageNumber === 1 ? (
                         <span className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 cursor-not-allowed border border-gray-200">
                             &lt;
@@ -420,7 +416,6 @@ const page = () => {
                         </Link>
                     )}
 
-                    {/* Page Number Links */}
                     {pageNumbers.map((pageNum) => (
                         <Link
                             key={pageNum}
@@ -432,7 +427,6 @@ const page = () => {
                         </Link>
                     ))}
 
-                    {/* Next Page Link */}
                     {pageNumber >= totalPages ? (
                         <span className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 cursor-not-allowed border border-gray-200">
                             &gt;

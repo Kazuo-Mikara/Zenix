@@ -1,36 +1,4 @@
-// // models/course.model.js
-// const mongoose = require('mongoose');
 
-// const lessonSchema = new mongoose.Schema({
-//     lessonId: { type: String, required: true },
-//     title: { type: String, required: true },
-//     duration: { type: Number, required: true },
-//     content: { type: String, required: true }
-// })
-
-// const moduleSchema = new mongoose.Schema({
-//     moduleId: { type: String, required: true },
-//     title: { type: String, required: true },
-//     lessonCount: { type: Number, required: true },
-//     duration: [
-//         { week: { type: Number, default: 0 } },
-//         { days: { type: Number, default: 0 } },
-//         { hours: { type: Number, default: 0 } },
-//         { minutes: { type: Number, required: true } }
-//     ]
-// });
-
-// const courseSchema = new mongoose.Schema({
-//     title: { type: String, required: true, trim: true },
-//     description: { type: String, required: true },
-//     instructor: { type: String, required: true },
-//     modules: [moduleSchema], // Embedding modules within course
-//     totalModules: { type: Number, required: true },
-//     difficulty: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced'], required: true },
-//     tags: [{ type: String }],
-// }, { timestamps: true }); // Adds createdAt and updatedAt fields
-
-// export default mongoose.models.CourseModel || mongoose.model('CourseModel', courseSchema);
 
 
 import mongoose from 'mongoose';
@@ -158,10 +126,19 @@ const CourseSchema = new Schema({
         type: [ModuleSchema],
         default: []
     },
-    // Add timestamps to track creation and update times
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+        // required: true, 
+    },
+    subCategory: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'SubCategory',
+        required: true,
+    },
 }, { timestamps: true });
 
 // Prevent Mongoose from compiling the model multiple times in Next.js environment
-const courseModel = mongoose.models.Course || mongoose.model('Course', CourseSchema);
+const courseModel = mongoose.models.Courses || mongoose.model('Courses', CourseSchema);
 
 export default courseModel;

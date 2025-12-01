@@ -1,5 +1,5 @@
 import dbConnect from '../../../lib/mongoose';
-import User from '../../../models/User';
+import User from '../../../models/Users/User';
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 
@@ -59,7 +59,9 @@ export async function GET(request) {
         const userData = {
             userId: user._id.toString(),
             email: user.email,
-            name: user.name
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role || 'user',
         };
 
         return NextResponse.json({ user: userData }, { status: 200 });

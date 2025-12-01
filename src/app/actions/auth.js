@@ -1,4 +1,4 @@
-import { SignupFormSchema } from '@/app/lib/definitions'
+import { SignupFormSchema } from '@/lib/definitions'
 
 export async function signupform(state, formData) {
     // Validate form fields

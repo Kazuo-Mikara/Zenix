@@ -1,177 +1,151 @@
-
 'use client'
-import React, { useEffect, useState } from 'react'
-import data from '@/app/_data/data';
-import {
-    Home, LayoutDashboard, Briefcase, Users, PieChart, TrendingUp, Bell, Settings,
-    Search, ChevronDown, MessageSquare, Phone, Globe, Mail, MoreVertical, Star, Folder, BarChart3, LineChart
-} from 'lucide-react';
-// import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { Chart as ChartJS } from "chart.js/auto"
-import { Bar, Doughnut, Line } from "react-chartjs-2"
-import MonthlyActivityChart from '../components/monthlyActivityChart'
-import UserProfileChart from '../components/userProfileChart';
-import InfoCard, { Sparkline } from '../components/infoCard'
-import WeeklyLineChart from '../components/weeklyLineChart';
-import Sidebar from '../components/sidebar';
-import axios from 'axios';
-export const infoCardsData = [
-    { title: 'Students', count: 932, color: 'text-indigo-600', icon: Briefcase, link: '/admin_dashboard/students' },
-    { title: 'Users', count: 932, color: 'text-red-600', icon: BarChart3, link: '/admin_dashboard/users' },
-    { title: 'Reviews', count: 932, color: 'text-green-600', icon: Folder, link: '/admin_dashboard/reviews' },
-    { title: 'Invoices', count: 932, color: 'text-yellow-600', icon: TrendingUp, link: '/admin_dashboard/invoices' },
-    { title: 'Courses', count: 932, color: 'text-yellow-600', icon: TrendingUp, link: '/admin_dashboard/courses' },
-    { title: 'Instructors', count: 932, color: 'text-yellow-600', icon: TrendingUp, link: '/admin_dashboard/instructors' },
-    { title: 'Categories', count: 932, color: 'text-yellow-600', icon: TrendingUp, link: '/admin_dashboard/categories' },
-    { title: 'Enrollments', count: 932, color: 'text-yellow-600', icon: TrendingUp, link: '/admin_dashboard/enrollments' },
-];
+import React from 'react'
+import { useQuery } from '@tanstack/react-query';
+import getDashboardInfo from '@/helpers/(admin)/dashboard/getDashboardInfo';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import UserTimeline from '../admin_dashboard/@userTimeline/page';
+import UserTimelineComponent from '../admin_dashboard/@userTimeline/page';
 const page = () => {
-    const INITIAL_USER_STATS = {
-        total: 0,
-        male: 0,
-        female: 0
-    };
-    const [user_count, setUserCount] = useState(INITIAL_USER_STATS);
-    useEffect(() => {
-        fetchData();
-    }, []);
+    const { data: session } = useSession();
+    const userName = session?.user?.userName;
+    const {
+        data,
+        isLoading,
+        isError,
+        error,
+        refetch,
+        isFetching } = useQuery({
+            queryKey: ['dashboardInfo'],
+            queryFn: async () => {
+                try {
+                    const result = await getDashboardInfo();
+                    // const endTime = Date.now();
+                    // console.log(`✅ Dashboard info loaded in ${endTime - startTime}ms`, result);
+                    return result;
+                } catch (err) {
+                    console.error('❌ Dashboard info error:', err);
+                    throw err;
+                }
+            },
+            staleTime: 1000 * 60 * 5, // 5 minutes
+            gcTime: 1000 * 60 * 10,   // 10 minutes 
+            retry: 3,
+            retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+            meta: {
+                timeout: 30000 // 30 seconds timeout
+            }
+        });
 
-    const fetchData = async () => {
-        const response = await axios.post('/api/users', { getCount: true });
-        const data = await response.data;
-        console.log(data)
-        const { female_users, male_users } = data;
-        setUserCount({ female: female_users, male: male_users, total: female_users + male_users });
-
-    }
+    console.log(data)
     return (
-        <main className="flex-1 p-4 lg:p-8 overflow-y-auto max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">Dashboard</h1>
-            {/* Info Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {infoCardsData.map((card, index) => (
-                    <a href={card.link} key={index} className="block">
-                        <InfoCard
-                            {...card}
-
-                        />
-                    </a>
-                ))}
-
-
-            </div>
-            <div className="w-full items-center grid grid-cols-2 gap-6 my-4 ">
-                <div className=' h-[300px]'>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Yearly Activity</h3>
-                    <Line
-                        options={{
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    display: true,
-                                },
-                            },
-                        }}
-                        data={{
-                            labels: data.map(label => label.name),
-                            datasets: [
-                                {
-                                    label: 'Instructors',
-                                    data: data.map(label => label.uv),
-                                    backgroundColor: '#004aad',
-                                    borderColor: '#004aad',
-                                    borderWidth: 1,
-                                },
-                                {
-                                    label: 'Courses',
-                                    data: data.map(label => label.pv),
-                                    backgroundColor: '#FBBF24',
-                                    borderColor: '#FBBF24',
-                                    borderWidth: 1,
-                                }
-                            ],
-                        }}
-                    />
+        <div className="p-6 md:p-10 space-y-6">
+            <div className="flex flex-wrap justify-between items-center gap-3">
+                <div className="flex flex-col gap-1">
+                    <p className="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Zenix Dashboard</p>
+                    <p className="text-gray-500 dark:text-[#9dabb9] text-base font-normal leading-normal">Welcome back, <span className='font-extrabold text-xl'>{userName}!</span> Here's what's happening on your platform today.</p>
                 </div>
-
-                <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">User Profile</h3>
-                    <UserProfileChart total={user_count.total} male={user_count.male} female={user_count.female} />
-                    {/* <div className='flex flex-row justify-between'>
-                            <p className="text-sm text-gray-500">Total Users: {user_count.total}</p>
-                            <p className="text-sm text-gray-500">Male Users: {typeof (user_count.male) === 'number' ? user_count.male : 0}</p>
-                            <p className="text-sm text-gray-500">Female Users: {typeof (user_count.female) === 'number' ? user_count.female : 0}</p>
-                        </div> */}
+                <Link href="/admin_dashboard/users/add" className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary-300 text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2 hover:bg-primary-300/90">
+                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>add</span>
+                    <span className="truncate">Add New User</span>
+                </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#111418] border border-gray-200 dark:border-[#3b4754]">
+                    <p className="text-gray-600 dark:text-white text-base font-medium leading-normal">Total Users</p>
+                    <p className="text-gray-900 dark:text-white tracking-light text-3xl font-bold leading-tight">{data?.users}</p>
+                    <p className="text-green-500 text-sm font-medium leading-normal">+5.2%</p>
+                </div>
+                <div className="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#111418] border border-gray-200 dark:border-[#3b4754]">
+                    <p className="text-gray-600 dark:text-white text-base font-medium leading-normal">Active Courses</p>
+                    <p className="text-gray-900 dark:text-white tracking-light text-3xl font-bold leading-tight">{data?.courses}</p>
+                    <p className="text-green-500 text-sm font-medium leading-normal">+2.1%</p>
+                </div>
+                <div className="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#111418] border border-gray-200 dark:border-[#3b4754]">
+                    <p className="text-gray-600 dark:text-white text-base font-medium leading-normal">Total Enrollments</p>
+                    <p className="text-gray-900 dark:text-white tracking-light text-3xl font-bold leading-tight">{data?.enrollments}</p>
+                    <p className="text-green-500 text-sm font-medium leading-normal">+12.5%</p>
+                </div>
+                <div className="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#111418] border border-gray-200 dark:border-[#3b4754]">
+                    <p className="text-gray-600 dark:text-white text-base font-medium leading-normal">Payments in Progress</p>
+                    <p className="text-gray-900 dark:text-white tracking-light text-3xl font-bold leading-tight">{data?.invoices}</p>
+                    <p className="text-red-500 text-sm font-medium leading-normal">-1.8%</p>
                 </div>
             </div>
-            {/* Stats Overview */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
-                <div className="flex justify-between items-center mb-4">
-                    <div className="text-left">
-                        <p className="text-lg font-semibold text-gray-900">Total Customers</p>
-                        <p className="text-3xl font-bold text-gray-900">345,678</p>
+            <div className="bg-white dark:bg-[#111418] rounded-xl border border-gray-200 dark:border-[#3b4754] p-6 space-y-4">
+                <UserTimelineComponent />
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 flex min-w-72 flex-1 flex-col gap-2 rounded-xl border border-gray-200 dark:border-[#3b4754] p-6 bg-white dark:bg-[#111418]">
+                    <p className="text-gray-800 dark:text-white text-lg font-medium leading-normal">Enrollment Trends</p>
+                    <div className="flex items-baseline gap-2">
+                        <p className="text-gray-900 dark:text-white tracking-light text-4xl font-bold leading-tight truncate">1,230</p>
+                        <p className="text-green-500 text-base font-medium leading-normal">+15.3%</p>
                     </div>
-                    {/* Mock Filters */}
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
-                        <span className="font-medium text-green-500">New User: 49</span>
-                        <span className="font-medium text-red-500">Growth: +10%</span>
-                        <button className="flex items-center border rounded-lg px-3 py-1 hover:bg-gray-50">
-                            Month <ChevronDown className="h-3 w-3 ml-1" />
-                        </button>
+                    <p className="text-gray-500 dark:text-[#9dabb9] text-sm font-normal leading-normal">Last 30 Days</p>
+                    <div className="flex min-h-[220px] flex-1 flex-col gap-8 py-4">
+                        <svg fill="none" height="100%" preserveAspectRatio="none" viewBox="-3 0 478 150" width="100%" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25V149H326.769H0V109Z" fill="url(#paint0_linear_1131_5935)"></path>
+                            <path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25" stroke="#2b8cee" stroke-linecap="round" stroke-width="3"></path>
+                            <defs>
+                                <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_1131_5935" x1="236" x2="236" y1="1" y2="149">
+                                    <stop stop-color="#2b8cee" stop-opacity="0.3"></stop>
+                                    <stop offset="1" stop-color="#2b8cee" stop-opacity="0"></stop>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div className="flex justify-around">
+                            <p className="text-gray-500 dark:text-[#9dabb9] text-[13px] font-bold leading-normal tracking-[0.015em]">Week 1</p>
+                            <p className="text-gray-500 dark:text-[#9dabb9] text-[13px] font-bold leading-normal tracking-[0.015em]">Week 2</p>
+                            <p className="text-gray-500 dark:text-[#9dabb9] text-[13px] font-bold leading-normal tracking-[0.015em]">Week 3</p>
+                            <p className="text-gray-500 dark:text-[#9dabb9] text-[13px] font-bold leading-normal tracking-[0.015em]">Week 4</p>
+                        </div>
                     </div>
                 </div>
-
-                <MonthlyActivityChart />
-            </div>
-
-            {/* Secondary Charts and User Reviews */}
-            <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-8">
-                {/* Weekly/Statistic Chart */}
-                <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 lg:col-span-2">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Statistic / Weekly</h3>
-                    <div className="flex justify-end space-x-4 text-sm font-medium mb-4">
-                        <span className="text-green-600">+20% This Week</span>
-                        <span className="text-red-600">+13% Last Week</span>
-                    </div>
-                    <WeeklyLineChart />
-
-                    {/* Impression Bar Chart Mock */}
-                    <div className="mt-6">
-                        <h4 className="font-medium text-gray-700">Impression</h4>
-                        <div className="flex items-end h-16 mt-2 space-x-2">
-                            <div className="w-12 text-2xl font-bold text-gray-800">12.345</div>
-                            <div className="flex-1 h-full flex items-end space-x-2">
-                                <div className="w-1/3 h-full bg-indigo-600 rounded-md"></div>
-                                <div className="w-1/3 h-4/5 bg-indigo-300 rounded-md"></div>
-                                <div className="w-1/3 h-3/5 bg-indigo-200 rounded-md"></div>
+                <div className="flex flex-col gap-4 rounded-xl p-6 bg-white dark:bg-[#111418] border border-gray-200 dark:border-[#3b4754]">
+                    <h3 className="text-lg font-medium text-gray-800 dark:text-white">Recent Activity</h3>
+                    <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center justify-center size-10 rounded-full bg-blue-100 dark:bg-primary-300/20">
+                                <span className="material-symbols-outlined text-primary-300">person_add</span>
                             </div>
-                            <span className="text-xs text-gray-500 w-20">5.4% last year</span>
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-800 dark:text-white">New user signed up</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">John Doe - 2 min ago</p>
+                            </div>
                         </div>
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center justify-center size-10 rounded-full bg-green-100 dark:bg-green-500/20">
+                                <span className="material-symbols-outlined text-green-600 dark:text-green-400">school</span>
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-800 dark:text-white">New course enrollment</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">Jane Smith in "Intro to UX" - 15 min ago</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center justify-center size-10 rounded-full bg-purple-100 dark:bg-purple-500/20">
+                                <span className="material-symbols-outlined text-purple-600 dark:text-purple-400">add_circle</span>
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-800 dark:text-white">New course published</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">"Advanced JavaScript" - 1 hour ago</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center justify-center size-10 rounded-full bg-yellow-100 dark:bg-yellow-500/20">
+                                <span className="material-symbols-outlined text-yellow-600 dark:text-yellow-400">comment</span>
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-800 dark:text-white">New comment on a lesson</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">Alex Ray - 3 hours ago</p>
+                            </div>
+                        </div>
+                        <a className="text-primary-300 text-sm font-semibold mt-2 text-center hover:underline" href="#">View All Activity</a>
                     </div>
                 </div>
             </div>
-
-            {/* User Reviews */}
-            <h3 className="text-xl font-bold text-gray-900 mb-4">User Reviews</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[
-                    { name: 'Belle Epoque', rating: 5, excerpt: 'Sed eligendi facere repellendus, ipsum laudantium maxime ab, rerum architecto...' },
-                    { name: 'Nagika Almania', rating: 4.5, excerpt: 'Sed eligendi facere repellendus, ipsum laudantium maxime ab, rerum architecto...' },
-                    { name: 'Esmeralda Striff', rating: 5, excerpt: 'Sed eligendi facere repellendus, ipsum laudantium maxime ab, rerum architecto...' },
-                ].map((review, index) => (
-                    <div key={index} className="bg-white p-4 rounded-xl shadow-lg border border-gray-100">
-                        <div className="flex items-center text-amber-500 mb-2">
-                            {[...Array(5)].map((_, i) => (
-                                <Star key={i} className={`h-4 w-4 ${i < Math.floor(review.rating) ? 'fill-amber-500' : 'fill-none'}`} strokeWidth={2} />
-                            ))}
-                            {review.rating % 1 !== 0 && <span className="ml-1 text-sm font-semibold text-gray-700">{review.rating}</span>}
-                        </div>
-                        <h4 className="font-semibold text-gray-900 mb-1">{review.name}</h4>
-                        <p className="text-sm text-gray-600 line-clamp-2">{review.excerpt}</p>
-                    </div>
-                ))}
-            </div>
-        </main>
+        </div>
     )
 }
 

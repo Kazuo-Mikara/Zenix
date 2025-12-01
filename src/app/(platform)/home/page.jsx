@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer"
 // import usersData from "../../../data/users.json"
-import { useAuth } from "../../utils/AuthContext"
+import { useAuth } from "../../../utils/(user)/UserAuthContext"
 import Link from "next/link";
 import Image from "next/image";
 import MicrosoftIcon from '@mui/icons-material/Microsoft';
@@ -25,16 +25,16 @@ const Home = () => {
                     <main className="p-12">
                         <section className="text-center">
                             <div class="relative">
-                                <p class="text-primary font-semibold">START TO SUCCESS</p>
+                                <p class="text-primary-400 font-semibold">START TO SUCCESS</p>
                                 <h2 class="text-4xl md:text-6xl font-bold text-gray-800 mt-4 leading-tight">
-                                    Learn <span class="text-primary">Anything</span><br />at Your <span class="text-span">Pace</span>
+                                    Learn <span class="text-primary-400">Anything</span><br />at Your <span class="text-span">Pace</span>
                                 </h2>
                                 <p class="text-gray-600 mt-6 max-w-2xl mx-auto font-poppins">
 
                                     ZenEd offers a flexible and affordable way to learn new skills. With over 200,000 courses, you can learn anything from coding to cooking.
                                 </p>
                                 <div class="mt-8">
-                                    <Link href="/login" class="bg-primary text-white px-8 py-3 rounded-lg text-lg font-semibold hover:opacity-80 cursor-pointer">Let&apos;s Start</Link>
+                                    <Link href="/login" class="bg-primary-400 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:opacity-80 cursor-pointer">Let&apos;s Start</Link>
                                 </div>
                                 <img alt="Abstract shapes and icons representing learning" class="absolute -top-10 left-10 w-20 opacity-50 hidden md:block" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG_Uw6KV9Vqb_Zq2Inxd1b0RJ_R-a6uQ4Dk-WCgublxdpaz81mNbUSOBK3R2IghfIyLpytTmbplqMvOtaNFg3XrFUW1s-xgiblT9mtsnmeG0aUFN2tFp_S0GT_nLhFsA5ASp-SUBq9x5K9h_CNWnOO9t2urZnknep_3VgFuSkgWqkSMNaN5B8vtDltPq0HWpp7wZJ9x601rlamn2uzd4w6XhdCg8ROBYncXJ5jcpuiNmE9iZhhcNrSe2F7Ixab01gaNinjPMlQcBw" />
                                 <img alt="Abstract shapes and icons representing learning" class="absolute top-0 right-10 w-24 opacity-50 hidden md:block" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5edBSjkgxAHJopsDd1dJ2VyKxACMVdkoI3YCyzKYAC0KgYi96FYy1eW4Zv6DYWQFKPDjY4NB8cCyuCToHVCyNQM7Ebjx8McrbFKZVHiPcrU2XZkB0ZpoDYfdmSfKzwOnRdXLfWE-1gHz3kVMZOscgoJWCpAq9yEz0Y9SjouEEp6vTrAJ_rQR2QChfx6dqO8fgwwJ44vzXkDJ_QPHvRq9L2YuVC2Uzo6xZcpZSvskevQ4pqBDpFA8j0sshdkv0-GSdPjFrIG7kTIc" />

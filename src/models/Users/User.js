@@ -13,16 +13,21 @@ const enrollmentSchema = new mongoose.Schema({
     },
     status: { type: String, enum: ['in-progress', 'finished', 'pending'], default: 'pending' },
     finishedDate: { type: Date } // Optional
-}, { _id: false }); // Don't create a separate _id for subdocuments unless needed
+}, { _id: false });
 
 const userSchema = new mongoose.Schema({
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, trim: true, lowercase: true },
+    status: { type: String, enum: ['active', 'inactive', 'banned'], default: 'active' },
     passwordHash: { type: String, required: true },
     role: { type: String, enum: ['student', 'mentor', 'admin'], default: 'student' },
+    gender: { type: String, enum: ['male', 'female', 'bisexual', 'prefer not to say'] },
     mentorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Self-referencing for mentor
     enrolledCourses: [enrollmentSchema],
+    sessionToken: { type: String },
+    lastLogin: { type: Date, default: Date.now },
+    loginAttempts: { type: Number, default: 0 }
 }, { timestamps: true });
 
 // --- Password Hashing Middleware ---
@@ -39,4 +44,4 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.passwordHash);
 };
 
-module.exports = mongoose.model('User', userSchema);
+export default mongoose.models.Users || mongoose.model('Users', userSchema);

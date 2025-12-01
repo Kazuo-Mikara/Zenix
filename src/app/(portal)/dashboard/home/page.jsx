@@ -5,10 +5,9 @@ import TaskIcon from '@mui/icons-material/Task';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useAuth } from '@/app/utils/AuthContext';
+import { useAuth } from '@/utils/(user)/UserAuthContext';
 export default function HomePage() {
     const { user } = useAuth();
-    console.log(user);
     return (
         <div className="flex-1 overflow-y-auto p-6 bg-white">
             <div className="flex justify-between items-center mb-6">

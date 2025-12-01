@@ -7,7 +7,7 @@ import img from '../../../../public/assets/Course_img.png'
 import SortByDropDownMenu from "@/components/examples/dropdown-menu/standard/dropdown-menu-standard-5";
 import CoursePlatformDropDownMenu from "@/components/examples/dropdown-menu/standard/coursePlatformDropDown"
 import Link from "next/link";
-import { useAuth } from "@/app/utils/AuthContext";
+import { useAuth } from "@/utils/(user)/UserAuthContext";
 import { Parisienne } from "next/font/google";
 export default function CoursesPage({ searchParams }) {
     const { user } = useAuth();

@@ -1,12 +1,14 @@
 import Footer from '@/components/Footer'
 import React from 'react'
-
+import { AuthProvider } from "@/utils/(user)/UserAuthContext";
 const AuthLayout = ({ children }) => {
     return (
-        <div>
-            {children}
-            <Footer />
-        </div>
+        <AuthProvider>
+            <div>
+                {children}
+                <Footer />
+            </div>
+        </AuthProvider>
     )
 }
 

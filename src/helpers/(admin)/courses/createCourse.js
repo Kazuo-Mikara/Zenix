@@ -9,7 +9,7 @@ const createCourse = async (dataToSubmit) => {
             },
         });
 
-        return response.data; 
+        return response.data;
     } catch (error) {
 
         if (error.response) {

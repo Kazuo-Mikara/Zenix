@@ -15,7 +15,7 @@ import {
 
 
 export const title = "Profile Dropdown with Avatar";
-const AdminProfileDropDown = ({ name, email, image, onLogout }) => {
+const AdminProfileDropDown = ({ name, email, role, image, onLogout }) => {
     // --- Determine the Image Source ---
     let imageUrl = image;
 
@@ -47,7 +47,7 @@ const AdminProfileDropDown = ({ name, email, image, onLogout }) => {
             <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                        <p className="font-medium text-sm leading-none">{name}</p>
+                        <p className="font-medium text-sm leading-none">{name} <span className="text-xs">({role})</span></p>
                         <p className="text-muted-foreground text-xs leading-none">
                             {email}
                         </p>

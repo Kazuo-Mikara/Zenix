@@ -6,7 +6,7 @@ import KeyIcon from '@mui/icons-material/Key';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../utils/AuthContext';
+import { useAuth } from '../../../utils/(user)/UserAuthContext';
 import toast, { Toaster } from 'react-hot-toast';
 
 

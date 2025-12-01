@@ -1,4 +1,4 @@
-const data = [
+const chart_data = [
     {
         name: '2018',
         uv: 4000,
@@ -42,4 +42,4 @@ const data = [
         amt: 2100,
     },
 ];
-export default data;
+export default chart_data;

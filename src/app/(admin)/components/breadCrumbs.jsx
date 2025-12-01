@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { usePathname } from 'next/navigation';
+
 // Mock Next.js imports for runnable single-file context
 const Link = ({ href, children, className }) => <a href={href} className={className}>{children}</a>;
 const Home = ({ size, className }) => (
@@ -7,7 +8,7 @@ const Home = ({ size, className }) => (
         <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
     </svg>
 );
-const Loader2 = () => null; // Not used but kept for consistency
+
 /**
  * Helper function to format path segments (e.g., 'admin_dashboard' -> 'Admin Dashboard')
  * @param {string} segment - The raw path segment.
@@ -24,7 +25,12 @@ const formatSegment = (segment) => {
     // Simple custom overrides for common slugs
     if (formatted === 'Admin Dashboard') return 'Dashboard';
     if (formatted === 'Add') return 'Add New';
+    if (formatted === 'Edit') return 'Edit Course';
+    if (formatted === 'Users') return 'Users';
+    if (formatted === 'Login') return;
+    if (formatted === 'Register') return;
 
+    console.log(formatted);
     return formatted;
 };
 
@@ -48,23 +54,24 @@ const SeparatorIcon = () => (
     </svg>
 );
 
-
 const BreadCrumbsNavigation = () => {
-
     const pathname = usePathname();
+
     const breadcrumbs = useMemo(() => {
         const segments = pathname.split('/').filter(s => s);
         let cumulativePath = '';
 
-        return segments.map((segment, index) => {
-            cumulativePath += '/' + segment;
+        return segments
+            .filter(segment => !segment.startsWith('id=')) // **Filter out ID segments**
+            .map((segment, index, filteredSegments) => {
+                cumulativePath += '/' + segment;
 
-            return {
-                href: cumulativePath,
-                label: formatSegment(segment),
-                isCurrent: index === segments.length - 1,
-            };
-        });
+                return {
+                    href: cumulativePath,
+                    label: formatSegment(segment),
+                    isCurrent: index === filteredSegments.length - 1,
+                };
+            });
     }, [pathname]);
 
     // Determine the main page title (last breadcrumb's label)
@@ -79,13 +86,11 @@ const BreadCrumbsNavigation = () => {
     const allSegments = [homeSegment, ...breadcrumbs];
 
     return (
-        <div className="p-4 sm:p-6  rounded-xl  font-inter">
+        <div className="p-4 sm:p-6 rounded-xl font-inter">
             <nav className="flex flex-col" aria-label="Breadcrumb">
-
                 <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                     {allSegments.map((item, index) => {
                         // Skip the root admin_dashboard segment if it's the first in the path
-                        // This prevents duplicating the "Home" link.
                         if (item.label === 'Dashboard' && index === 0 && breadcrumbs.length > 0) return null;
 
                         const isFirstLink = index === 1;
@@ -100,12 +105,7 @@ const BreadCrumbsNavigation = () => {
                                 {index > 0 && (
                                     <li aria-hidden="true">
                                         <div className="flex items-center space-x-1.5">
-                                            {
-                                                !isFirstLink && (
-
-                                                    <SeparatorIcon />
-                                                )
-                                            }
+                                            {!isFirstLink && <SeparatorIcon />}
                                         </div>
                                     </li>
                                 )}
@@ -131,4 +131,5 @@ const BreadCrumbsNavigation = () => {
         </div>
     );
 }
-export default BreadCrumbsNavigation
+
+export default BreadCrumbsNavigation;

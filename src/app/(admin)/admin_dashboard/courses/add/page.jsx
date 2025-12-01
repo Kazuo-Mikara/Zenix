@@ -1,10 +1,10 @@
 'use client'
 
 import React, { useState, useMemo, useEffect } from 'react';
-import CancelModalComponent from '../../../components/Modal';
+import CancelModalComponent from '@/app/(admin)/components/CancelModalComponent';
 import { toast, Toaster } from "react-hot-toast"
 import createCourse from '../../../../../helpers/(admin)/courses/createCourse';
-import FormCard from '@/app/(admin)/components/FormCard';
+import FormCard from '@/app/(admin)/components/CourseAddFormCard';
 import { useRouter } from 'next/navigation';
 
 // Utility function to calculate module duration in minutes
@@ -286,7 +286,7 @@ const Page = () => {
                         },
                     }}
                 />
-                <CancelModalComponent open={cancelModal} setOpen={setCancelModal} handleCancel={handleGoBack} />
+                <CancelModalComponent open={cancelModal} setOpen={setCancelModal} handleCancel={handleGoBack} message="Are you sure you want to cancel adding Course?" />
                 <FormCard formData={formData}
                     handleSubmit={handleSubmit}
                     openCancelModal={openCancelModal}

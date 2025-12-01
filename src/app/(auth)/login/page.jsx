@@ -7,7 +7,7 @@ import Image from 'next/image';
 // import { NavLink, useNavigate } from 'react-router';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../utils/AuthContext';
+import { useAuth } from '../../../utils/(user)/UserAuthContext';
 import toast, { Toaster } from 'react-hot-toast';
 const login = () => {
 
@@ -25,29 +25,33 @@ const login = () => {
         e.preventDefault();
         const email = loginForm.current.email.value;
         const password = loginForm.current.password.value;
-        setLoading(true);
-        setError(null);
-        setSuccess(false);
-
+        const userInfo = { email, password }
         try {
-            const result = await loginUser({ email, password });
-            setSuccess(true);
-            // Important: The JWT is now in an HTTP-only cookie on the client's browser,
-            // so we don't need to manually save anything to localStorage here.
-            // Instead, we can redirect the user to a protected route.
-            router.push('/home');
-            toast.success('Login successful!');
-            console.log('Login Successful:', result.data);
-            console.log('User ID:', result.data.userId);
 
-            // --- NEXT STEP IN A REAL APP ---
-            // router.push('/dashboard'); // Redirect user to a protected route
+            const result = await loginUser(userInfo);
+            if (result.success) {
+                setLoading(false);
+                setSuccess(true);
+                toast.success('Login successful!');
+                router.push('/home');
+            }
+            // if (result.status === 200) {
+            //     setLoading(true);
+            //     setError(null);
+            //     setSuccess(false);
+            // }
 
+        }
+        //     router.push('/home');
+        // toast.success('Login successful!');
+        // console.log('Login Successful:', result.data);
+        // console.log('User ID:', result.data.userId);
 
-        } catch (err) {
+        // --- NEXT STEP IN A REAL APP ---
+        // router.push('/dashboard'); // Redirect user to a protected route
+        catch (err) {
             console.error('Network Error:', err);
-            // const networkError = 'A network error occurred. Please check your connection.';
-            setError(networkError);
+            setError('A network error occurred. Please check your connection.');
         } finally {
             setLoading(false);
         }
