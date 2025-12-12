@@ -10,19 +10,25 @@ export const authConfig = {
     },
     providers: [],
     callbacks: {
-        async authorized({ request, auth }) {
+        authorized({ request, auth }) {
             const { pathname } = request.nextUrl;
 
             // Admin dashboard routes
             if (pathname.startsWith('/admin_dashboard') && !pathname.startsWith('/admin_dashboard/auth')) {
                 const isAdmin = auth?.user?.role === 'admin' && auth?.user?.status === 'active';
-                return isAdmin;
+                if (!isAdmin) {
+                    return Response.redirect(new URL('/admin_dashboard/auth/login', request.nextUrl));
+                }
+                return true;
             }
 
             // Portal routes
             if (pathname.startsWith('/portal') && !pathname.startsWith('/portal/auth')) {
                 const isMentor = auth?.user?.role === 'mentor' && auth?.user?.status === 'active';
-                return isMentor;
+                if (!isMentor) {
+                    return Response.redirect(new URL('/auth/login', request.nextUrl));
+                }
+                return true;
             }
 
             // Home routes - check status
