@@ -3,8 +3,10 @@ import Credentials from "next-auth/providers/credentials";
 import dbConnect from "../lib/mongoose";
 import Users from "@/models/Users/User";
 import Admin from "@/models/Admin/Admin";
+import { authConfig } from "./auth.config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    ...authConfig,
     providers: [
         // Admin Provider
         Credentials({
@@ -207,37 +209,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     ],
 
     callbacks: {
-        async authorized({ request, auth }) {
-            const { pathname } = request.nextUrl;
-
-            // Admin dashboard routes
-            if (pathname.startsWith('/admin_dashboard') && !pathname.startsWith('/admin_dashboard/auth')) {
-                const isAdmin = auth?.user?.role === 'admin' && auth?.user?.status === 'active';
-                return isAdmin;
-            }
-
-            // Portal routes
-            if (pathname.startsWith('/portal') && !pathname.startsWith('/portal/auth')) {
-                const isMentor = auth?.user?.role === 'mentor' && auth?.user?.status === 'active';
-                return isMentor;
-            }
-
-            // Home routes - check status
-            if (pathname.startsWith('/home') && !pathname.startsWith('/home/auth')) {
-                const isActive = auth?.user?.status === 'active';
-                return isActive;
-            }
-
-            // Platform dashboard routes
-            if (pathname.startsWith('/dashboard')) {
-                const hasAccess = (auth?.user?.role === 'student' || auth?.user?.role === 'admin')
-                    && auth?.user?.status === 'active';
-                return hasAccess;
-            }
-
-            return true;
-        },
-
+        ...authConfig.callbacks,
         async jwt({ token, user, trigger }) {
             if (user) {
                 token.id = user.id;
@@ -245,8 +217,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.userName = user.userName;
                 token.firstName = user.firstName;
                 token.lastName = user.lastName;
-                token.status = user.status; // ✅ Add status to token
-
+                token.status = user.status;
             }
 
             // Check status on every request
@@ -260,31 +231,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
             return token;
         },
-
-        async session({ session, token }) {
-            if (token) {
-                session.user.id = token.id;
-                session.user.role = token.role;
-                session.user.userName = token.userName;
-                session.user.firstName = token.firstName;
-                session.user.lastName = token.lastName;
-                session.user.status = token.status; // ✅ Add status to session
-
-            }
-            return session;
-        }
     },
 
-    session: {
-        strategy: "jwt",
-        maxAge: 3 * 24 * 60 * 60,
-    },
 
-    pages: {
-        signIn: "/auth/login", // Default sign-in page
-        error: "/auth/error" // Custom error page
-    },
-
-    trustHost: true,
-    secret: process.env.AUTH_SECRET,
 });
