@@ -12,11 +12,15 @@ export const authConfig = {
     callbacks: {
         authorized({ request, auth }) {
             const { pathname } = request.nextUrl;
+            console.log("Middleware checking:", pathname);
+            console.log("Auth object:", auth);
 
             // Admin dashboard routes
             if (pathname.startsWith('/admin_dashboard') && !pathname.startsWith('/admin_dashboard/auth')) {
                 const isAdmin = auth?.user?.role === 'admin' && auth?.user?.status === 'active';
+                console.log("Is Admin?", isAdmin, "Role:", auth?.user?.role, "Status:", auth?.user?.status);
                 if (!isAdmin) {
+                    console.log("Redirecting to admin login...");
                     return Response.redirect(new URL('/admin_dashboard/auth/login', request.nextUrl));
                 }
                 return true;

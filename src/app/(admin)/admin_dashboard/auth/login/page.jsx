@@ -47,16 +47,17 @@ const AdminLoginPage = () => {
                 const response = await signIn('admin', {
                     email: formData.email,
                     password: formData.password,
-                    redirect: false,
-                    callbackUrl: '/admin_dashboard', // ✅ Explicitly set callbackUrl
+                    redirect: false
                 });
 
+                console.log(formData.email, formData.password);
                 console.log("Sign-in result:", response);
-
                 if (response?.ok) {
                     // ✅ Redirect only on success
-                    router.push('/admin_dashboard');
-                    router.refresh();
+                    // router.push('/admin_dashboard');
+                    // router.refresh();
+                    setLoading(false);
+
                 } else {
                     // Handle sign-in failure (e.g., credentials mismatch though loginUser checked it)
                     toast.error("Login failed. Please try again.");
@@ -67,6 +68,11 @@ const AdminLoginPage = () => {
             console.error("Login error:", err);
             toast.error("An unexpected error occurred. Please try again.");
             setLoading(false);
+        }
+        finally {
+            setLoading(false);
+            router.push('/admin_dashboard');
+            router.refresh();
         }
     }
 
