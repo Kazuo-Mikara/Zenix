@@ -40,6 +40,7 @@ const AdminLoginPage = () => {
                 setLoading(false);
                 return;
             }
+            // If the server action check passes, proceed to NextAuth signIn
             if (result.success) {
                 toast.success(result.message);
 
@@ -47,21 +48,25 @@ const AdminLoginPage = () => {
                     email: formData.email,
                     password: formData.password,
                     redirect: false,
+                    callbackUrl: '/admin_dashboard', // ✅ Explicitly set callbackUrl
                 });
+
                 console.log("Sign-in result:", response);
-                if (response.ok) {
 
+                if (response?.ok) {
+                    // ✅ Redirect only on success
+                    router.push(response.url || '/admin_dashboard');
+                    router.refresh();
+                } else {
+                    // Handle sign-in failure (e.g., credentials mismatch though loginUser checked it)
+                    toast.error("Login failed. Please try again.");
                     setLoading(false);
-
                 }
             }
         } catch (err) {
             console.error("Login error:", err);
             toast.error("An unexpected error occurred. Please try again.");
-        } finally {
-            setLoading(false);
-            router.push('/admin_dashboard/');
-            router.refresh();
+            setLoading(fals e);
         }
     }
 
