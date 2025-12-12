@@ -30,12 +30,16 @@ const Sidebar = ({ hidden }) => {
         return cleanPathname.startsWith(cleanP + '/');
     };
     return (
-        <aside className={`flex h-auto min-h-screen flex-col bg-white dark:bg-[#111418] transition-all duration-300 ease-in-out overflow-hidden ${hidden ? 'w-0 p-0 border-none opacity-0' : 'w-68 p-4 border-r border-gray-200 dark:border-[#283039] opacity-100'}`}>
+        <aside className={`flex h-auto min-h-screen flex-col bg-white dark:bg-[#111418] transition-all duration-300 ease-in-out overflow-hidden ${hidden ? 'w-20 p-2 border-r border-gray-200 opacity-100' : 'w-68 p-4 border-r border-gray-200 dark:border-[#283039] opacity-100'}`}>
             <div className="flex h-full min-h-[700px] flex-col justify-between">
                 <div className="flex flex-col gap-4">
                     <div className="flex items-center gap-4 text-gray-900 dark:text-white mb-4 px-3">
                         <span className="material-symbols-outlined text-primary-300" style={{ fontSize: '32px' }}>school</span>
-                        <h2 className="text-lg font-bold leading-tight tracking-[-0.015em]">Zenix</h2>
+                        {
+                            !hidden && (
+                                <h2 className="text-lg font-bold leading-tight tracking-[-0.015em]">Zenix</h2>
+                            )
+                        }
                     </div>
                     <div className="flex flex-col gap-2 justify-center">
                         {navItems.map((item, index) => {
@@ -49,10 +53,13 @@ const Sidebar = ({ hidden }) => {
                                         } ${!hidden ? 'justify-start' : 'justify-center'}`}
                                 >
                                     <item.icon className={`h-6 w-6 shrink-0 ${isActive(item.href) ? 'text-white' : 'text-gray-500'}`} />
-
-                                    <span className='text-sm font-medium leading-normal transition-discrete ease-in-out duration-500'>
-                                        {item.label}
-                                    </span>
+                                    {
+                                        !hidden && (
+                                            <span className='text-sm font-medium leading-normal transition-discrete ease-in-out duration-500'>
+                                                {item.label}
+                                            </span>
+                                        )
+                                    }
 
                                     {/* Tooltip for collapsed state */}
                                     {hidden && (
@@ -65,18 +72,27 @@ const Sidebar = ({ hidden }) => {
                         })}
                     </div>
                 </div>
-                <div className="flex flex-col gap-4">
-                    <Link href="/admin_dashboard/courses/add" className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary-300 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary-300/90 transition-colors duration-200">
-                        <span className="truncate">Create Course</span>
-                    </Link>
-                    <div className="flex gap-3 border-t border-gray-200 dark:border-[#283039] pt-4">
-                        <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Avatar of Admin Name" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCJS-hNaPDc9Y3ILfme1mTzPAto9FKM5H-5BUQu2NH5Sdv9RDsucQtqY-EU8mq6i82VrsVNUvJvkCXsRpJXhuuCrC4wgsX8MoRHSkBOnaKr1ZsHLhu2fDcsD6fq1yQGts1Q_yJi5T_AUuQFknUOMnF1uXIGpTBk6bK1jqInoGEOc8iw94Xbr175pRE7OEoyyeW_VW6n9cmyc5y7D1V2IQcXYwK2tCffoCW05A5iwoxN0MTkgxgsYpMo-byUfa-2ahO724YHbGmH9lu8")' }}></div>
-                        <div className="flex flex-col">
-                            <h1 className="text-gray-900 dark:text-white text-base font-medium leading-normal">Admin Name</h1>
-                            <p className="text-gray-500 dark:text-[#9dabb9] text-sm font-normal leading-normal">admin@example.com</p>
+                {
+                    hidden ?
+                        <div className="flex flex-col gap-4 items-center">
+                            <div className="flex gap-3 border-t border-gray-200 dark:border-[#283039] pt-4">
+                                <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Avatar of Admin Name" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCJS-hNaPDc9Y3ILfme1mTzPAto9FKM5H-5BUQu2NH5Sdv9RDsucQtqY-EU8mq6i82VrsVNUvJvkCXsRpJXhuuCrC4wgsX8MoRHSkBOnaKr1ZsHLhu2fDcsD6fq1yQGts1Q_yJi5T_AUuQFknUOMnF1uXIGpTBk6bK1jqInoGEOc8iw94Xbr175pRE7OEoyyeW_VW6n9cmyc5y7D1V2IQcXYwK2tCffoCW05A5iwoxN0MTkgxgsYpMo-byUfa-2ahO724YHbGmH9lu8")' }}></div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                        : (
+                            <div className="flex flex-col gap-4">
+                                <Link href="/admin_dashboard/courses/add" className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary-300 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary-300/90 transition-colors duration-200">
+                                    <span className="truncate">Create Course</span>
+                                </Link>
+                                <div className="flex gap-3 border-t border-gray-200 dark:border-[#283039] pt-4">
+                                    <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Avatar of Admin Name" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCJS-hNaPDc9Y3ILfme1mTzPAto9FKM5H-5BUQu2NH5Sdv9RDsucQtqY-EU8mq6i82VrsVNUvJvkCXsRpJXhuuCrC4wgsX8MoRHSkBOnaKr1ZsHLhu2fDcsD6fq1yQGts1Q_yJi5T_AUuQFknUOMnF1uXIGpTBk6bK1jqInoGEOc8iw94Xbr175pRE7OEoyyeW_VW6n9cmyc5y7D1V2IQcXYwK2tCffoCW05A5iwoxN0MTkgxgsYpMo-byUfa-2ahO724YHbGmH9lu8")' }}></div>
+                                    <div className="flex flex-col">
+                                        <h1 className="text-gray-900 dark:text-white text-base font-medium leading-normal">Admin Name</h1>
+                                        <p className="text-gray-500 dark:text-[#9dabb9] text-sm font-normal leading-normal">admin@example.com</p>
+                                    </div>
+                                </div>
+                            </div>)
+                }
             </div>
         </aside>
     );

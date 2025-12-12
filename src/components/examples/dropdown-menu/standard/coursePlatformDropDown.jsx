@@ -33,6 +33,7 @@ const CoursePlatformDropDownMenu = ({ coursePlatform, setCoursePlatform }) => {
                     <DropdownMenuRadioItem value="Coursera">Coursera</DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="edX">edX</DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="Skillshare">SkillShare</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="Zenix">Zenix</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
             </DropdownMenuContent>
         </DropdownMenu>

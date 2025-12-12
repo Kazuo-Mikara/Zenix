@@ -6,6 +6,7 @@ import Image from "next/image";
 import img from '../../../../public/assets/Course_img.png'
 import SortByDropDownMenu from "@/components/examples/dropdown-menu/standard/dropdown-menu-standard-5";
 import CoursePlatformDropDownMenu from "@/components/examples/dropdown-menu/standard/coursePlatformDropDown"
+import LevelDropDownMenu from "@/components/examples/dropdown-menu/standard/levelDropdown"
 import Link from "next/link";
 import { useAuth } from "@/utils/(user)/UserAuthContext";
 import { Parisienne } from "next/font/google";
@@ -14,45 +15,12 @@ export default function CoursesPage({ searchParams }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [courseCount, setCourseCount] = useState();
-    const [coursePlatform, setCoursePlatform] = useState('Udemy');
+    const [coursePlatform, setCoursePlatform] = useState('Zenix');
+    const [level, setLevel] = useState('Default');
     const [students, setStudents] = useState();
     const [sorting, setSorting] = useState("Popularity");
     const [courses, setCourses] = useState([]);
-    //Pagination
-    const { page } = use(searchParams);
-    const [perPage, setPerPage] = useState(20);
-    let pageNumber = parseInt(page, 10);
-    pageNumber = !pageNumber || pageNumber < 1 ? 1 : pageNumber;
-    const totalPages = Math.ceil(courseCount / perPage);
-    const prevPage = pageNumber - 1 > 0 ? pageNumber - 1 : 1;
-    const nextPage = pageNumber + 1;
 
-    const pageNumbers = [];
-    const offsetNumber = 3;
-    for (let i = pageNumber - offsetNumber; i <= pageNumber + offsetNumber; i++) {
-        if (i >= 1 && i <= totalPages) {
-            pageNumbers.push(i);
-        }
-    }
-    // Pagination 
-
-    useEffect(() => {
-        const fetchCourses = async () => {
-            try {
-                const response = await axios.post('/api/getCourses', { page: pageNumber, perPage: perPage, coursePlatform: coursePlatform });
-                setCourseCount(response.data.courseCount);
-                setCourses(response.data.courses);
-                setStudents(response.data.students);
-                // console.log(courses);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchCourses();
-        sortedCourses;
-    }, [pageNumber, perPage, totalPages,]);
 
 
     // Function to safely convert the formatted string to a number
@@ -77,28 +45,80 @@ export default function CoursesPage({ searchParams }) {
 
     // Inside your CoursesPage component:
 
-    const sortedCourses = useMemo(() => {
-        // 1. Normalize the raw courses received from the API
-        const cleaned = courses.map(course => ({
+    const processedCourses = useMemo(() => {
+
+        // 1. Normalize the raw courses
+        // Ensure normalizeStudentCount is properly defined and accessible, or passed as a dependency if it's an external function.
+        const normalizedCourses = courses.map(course => ({
             ...course,
-            // Use the safe normalization function
-            studentsCount: normalizeStudentCount(course.students),
+            studentsCount: normalizeStudentCount(course.students), // Assuming normalizeStudentCount is defined elsewhere
         }));
 
-        // 2. Sort the cleaned array (only need to sort if required)
+
+        // 2. Sort the normalized array
+        let sortedCourses = [...normalizedCourses]; // Create a copy to sort without mutating normalizedCourses
+
         if (sorting === 'Popularity') {
-            // Ensure both properties exist before subtracting, though normalizeStudentCount handles defaults
-            return cleaned.sort((a, b) => b.studentsCount - a.studentsCount);
+            // Safer sort: handle potential undefined/null values
+            sortedCourses.sort((a, b) => (b.studentsCount || 0) - (a.studentsCount || 0));
+
+        } else if (sorting === 'CourseName') {
+            sortedCourses.sort((a, b) => a.title.localeCompare(b.title));
+
+        } else {
+
         }
-        else if (sorting == 'CourseName') {
-            return cleaned.sort((a, b) => a.title.localeCompare(b.title));
+
+        // 3. Filter by level
+        let filteredCourses = sortedCourses;
+
+        // Only filter if a specific level is selected (and not the 'Default' option)
+        if (level && level !== 'Default') {
+            filteredCourses = sortedCourses.filter(course => course.difficulty === level);
+        } else {
+
+
         }
-        return cleaned;
 
-    }, [courses, sorting]);
-    // console.log(sortedCourses);
+        return filteredCourses;
 
+    }, [courses, sorting, level, normalizeStudentCount]);
+    const finalCourseCount = processedCourses.length;
+    const { page } = use(searchParams);
+    let pageNumber = parseInt(page, 10);
+    const [perPage, setPerPage] = useState(12);
+    //Pagination
+    pageNumber = !pageNumber || pageNumber < 1 ? 1 : pageNumber;
+    const totalPages = Math.ceil(finalCourseCount / perPage);
+    pageNumber = Math.min(pageNumber, totalPages > 0 ? totalPages : 1);
+    const prevPage = pageNumber > 1 ? pageNumber - 1 : 1;
+    const nextPage = pageNumber < totalPages ? pageNumber + 1 : totalPages;
+    const pageNumbers = [];
+    const offsetNumber = 5;
+    for (let i = pageNumber - offsetNumber; i <= pageNumber + offsetNumber; i++) {
+        if (i >= 1 && i <= totalPages) {
+            pageNumbers.push(i);
+        }
+    }
+    // Pagination 
 
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                const response = await axios.post('/api/courses', { page: pageNumber, perPage: perPage, coursePlatform: coursePlatform });
+                setCourseCount(response.data.courseCount);
+                setCourses(response.data.courses);
+                setStudents(response.data.students);
+                // console.log(courses);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCourses();
+        processedCourses;
+    }, [pageNumber, perPage, totalPages, coursePlatform]);
 
     const getAllInstructor = () => {
         const instructors = courses.flatMap(course => course.instructor);
@@ -137,11 +157,7 @@ export default function CoursesPage({ searchParams }) {
                             <p class="text-sm font-medium text-gray-800 dark:text-gray-200">Instructor</p>
                             <span class="material-symbols-outlined text-base">expand_more</span>
                         </button>
-                        <button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-gray-100 px-3 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
-                            <span class="material-symbols-outlined text-base">signal_cellular_alt</span>
-                            <p class="text-sm font-medium text-gray-800 dark:text-gray-200">Level</p>
-                            <span class="material-symbols-outlined text-base">expand_more</span>
-                        </button>
+                        <LevelDropDownMenu level={level} setLevel={setLevel} />
                         <CoursePlatformDropDownMenu coursePlatform={coursePlatform} setCoursePlatform={setCoursePlatform} />
                         <div class="grow"></div>
 
@@ -152,10 +168,10 @@ export default function CoursesPage({ searchParams }) {
                     </div>
                     {
                         !loading && (
-                            <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
-                                {sortedCourses.map((course) => {
+                            <div class={`mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4`}>
+                                {processedCourses.map((course) => {
                                     return (
-                                        <Link key={course._id} href={`/courses/course?courseId=${course._id}`} class="flex transform flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:shadow-primary/10">
+                                        <Link key={course._id} href={`/courses/${course._id}?coursePlatform=${coursePlatform}`} class="flex transform flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:shadow-primary/10">
                                             <div class="flex flex-col gap-4 p-4">
                                                 <div class="flex flex-col gap-1">
                                                     <p class="text-base font-bold leading-tight text-gray-800 dark:text-gray-300 truncate">{course.title}</p>
@@ -164,7 +180,7 @@ export default function CoursesPage({ searchParams }) {
                                                     <p class="text-sm font-normal text-gray-600 dark:text-gray-400">{course.instructor}</p>
                                                 </div>
                                                 <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                                                    <span class="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">{course.duration}</span>
+                                                    <span class="rounded-full bg-primary-300/10 px-2 py-0.5 text-xs font-semibold text-primary">{course.difficulty}</span>
                                                     <div class="flex items-center gap-1">
                                                         {/* <span class="material-symbols-outlined !text-base text-amber-500">star</span> */}
                                                         <span class="font-medium text-text dark:text-gray-300">{course.students}</span>
@@ -186,25 +202,25 @@ export default function CoursesPage({ searchParams }) {
                         <div className="flex items-center gap-2">
 
                             <button
-                                className={`p-2 rounded-md ${perPage === 10 ? 'bg-gray-300' : 'bg-gray-100 hover:bg-gray-200'}`}
-                                onClick={() => setPerPage(10)}>
-                                10
+                                className={`p-2 rounded-md ${perPage === 12 ? 'bg-gray-300' : 'bg-gray-100 hover:bg-gray-200'}`}
+                                onClick={() => setPerPage(12)}>
+                                12
                             </button>
 
                             <button
-                                className={`p-2 rounded-md ${perPage === 25 ? 'bg-gray-300' : 'bg-gray-100 hover:bg-gray-200'}`}
-                                onClick={() => setPerPage(25)}>
-                                25
+                                className={`p-2 rounded-md ${perPage === 24 ? 'bg-gray-300' : 'bg-gray-100 hover:bg-gray-200'}`}
+                                onClick={() => setPerPage(24)}>
+                                24
                             </button>
 
                             <button
-                                className={`p-2 rounded-md ${perPage === 50 ? 'bg-gray-300 ' : 'bg-gray-100 hover:bg-gray-200'}`}
-                                onClick={() => setPerPage(50)}>50
+                                className={`p-2 rounded-md ${perPage === 48 ? 'bg-gray-300 ' : 'bg-gray-100 hover:bg-gray-200'}`}
+                                onClick={() => setPerPage(48)}>48
                             </button>
                             <button
-                                className={`p-2 rounded-md ${perPage === 100 ? 'bg-gray-300' : 'bg-gray-100 hover:bg-gray-200'}`}
-                                onClick={() => setPerPage(100)} >
-                                100
+                                className={`p-2 rounded-md ${perPage === 96 ? 'bg-gray-300' : 'bg-gray-100 hover:bg-gray-200'}`}
+                                onClick={() => setPerPage(96)} >
+                                96
                             </button>
 
                         </div>
@@ -219,7 +235,7 @@ export default function CoursesPage({ searchParams }) {
                                 </Link>)}
                         {pageNumbers.map((pageNum, index) =>
                         (
-                            <Link key={index} href={`?page=${pageNum}`} class={`flex h-10 w-10 items-center justify-center rounded-lg ${pageNum === pageNumber ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'}`}>
+                            <Link key={index} href={`?page=${pageNum}`} class={`flex h-10 w-10 items-center justify-center rounded-lg ${pageNum === pageNumber ? 'bg-primary-300 text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'}`}>
                                 {pageNum}
                             </Link>
                         )

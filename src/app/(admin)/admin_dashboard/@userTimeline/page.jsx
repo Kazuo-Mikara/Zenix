@@ -3,6 +3,13 @@ import axios from 'axios'
 import React, { useState, useEffect } from 'react'
 import { useUserTimeline } from './useUserTimeline'
 const UserTimelineComponent = () => {
+    const statusStyles = {
+        active: 'bg-green-100 text-green-800',
+        inactive: 'bg-yellow-100 text-yellow-800',
+        banned: 'bg-red-100 text-red-800',
+        // Add a default for safety if needed
+        default: 'bg-gray-100 text-gray-800'
+    };
     const [userTimeline, setUserTimeline] = useState();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -10,7 +17,7 @@ const UserTimelineComponent = () => {
         try {
             setIsLoading(true);
             setError(null);
-            const response = await axios.get('/api/getUserTimeline');
+            const response = await axios.get('/api/userTimeline');
             const data = response.data.userTimeline;
             setUserTimeline(data);
 
@@ -64,6 +71,9 @@ const UserTimelineComponent = () => {
                             Role
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                            Status
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                             Joined
                         </th>
                     </tr>
@@ -76,12 +86,13 @@ const UserTimelineComponent = () => {
                                 <div className="text-sm text-gray-500">{user.email}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'mentor'
-                                    ? 'bg-blue-100 text-blue-800'
-                                    : 'bg-green-100 text-green-800'
-                                    }`}>
-                                    {user.role}
+                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusStyles[user.status] || statusStyles.default}`}>
+                                    {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                                 </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {new Date(user.createdAt).toLocaleDateString()}
@@ -90,7 +101,7 @@ const UserTimelineComponent = () => {
                     ))}
                 </tbody>
             </table>
-        </div>
+        </div >
     )
 }
 

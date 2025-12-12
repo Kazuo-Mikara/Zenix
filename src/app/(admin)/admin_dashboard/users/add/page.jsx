@@ -12,11 +12,15 @@ const initialFormData = {
     passwordHash: '', // **Changed from 'password' to match schema**
     role: 'student', // Default role
     gender: '',
-    mentorId: '', // Optional
+    mentorId: '',
+    status: 'active', // Default status
+    plan: 'free' // Default plan
 };
 
-const ROLES = ['student', 'mentor'];
-const GENDERS = ['male', 'female', 'bisexual', 'prefer not to say']
+const ROLES = ['student', 'mentor', 'instructor'];
+const GENDERS = ['male', 'female', 'bisexual', 'prefer not to say'];
+const STATUS_OPTIONS = ['active', 'inactive', 'banned'];
+const PLAN_OPTIONS = ['free', 'premium'];
 const FormInput = ({
     label,
     name,
@@ -86,7 +90,9 @@ const page = () => {
         if (!email.trim() || !emailRegex.test(email)) newErrors.email = 'A valid email is required.';
         if (passwordHash.length < 8) newErrors.passwordHash = 'Password must be at least 8 characters long.';
         if (!ROLES.includes(role)) newErrors.role = 'Invalid role selected.';
-        if (!GENDERS.includes(gender)) newErrors.gender = 'Invalid role selected.';
+        if (!GENDERS.includes(gender)) newErrors.gender = 'Invalid gender selected.';
+        if (!STATUS_OPTIONS.includes(formData.status)) newErrors.status = 'Invalid status selected.';
+        if (!PLAN_OPTIONS.includes(formData.plan)) newErrors.plan = 'Invalid plan selected.';
         // **Mentor ID validation (only if provided)**
         if (mentorId && mentorId.trim() && !objectIdRegex.test(mentorId.trim())) {
             newErrors.mentorId = 'Mentor ID must be a valid MongoDB ObjectId (24 characters).';
@@ -214,7 +220,7 @@ const page = () => {
                         {errors.role && <p className="mt-1 text-sm text-red-500">{errors.role}</p>}
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
                             Gender <span className="text-red-500">*</span>
                         </label>
                         <select
@@ -223,9 +229,10 @@ const page = () => {
                             value={formData.gender}
                             onChange={handleChange}
                             required
-                            className={`w-full p-3 border rounded-lg appearance-none bg-white focus:ring-primary-500 focus:border-primary-500 transition duration-150 ${errors.role ? 'border-red-500' : 'border-gray-300'
+                            className={`w-full p-3 border rounded-lg appearance-none bg-white focus:ring-primary-500 focus:border-primary-500 transition duration-150 ${errors.gender ? 'border-red-500' : 'border-gray-300'
                                 }`}
                         >
+                            <option value="" disabled>Select Gender</option>
                             {GENDERS.map(gender => (
                                 <option key={gender} value={gender}>
                                     {gender.charAt(0).toUpperCase() + gender.slice(1)}

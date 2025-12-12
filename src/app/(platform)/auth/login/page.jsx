@@ -1,61 +1,65 @@
 'use client'
 import React, { useState, useRef } from 'react';
-import student_img from "../../../../public/assets/anime_student.png"
+import student_img from "../../../../../public/assets/anime_student.png"
 import MailIcon from '@mui/icons-material/Mail';
 import KeyIcon from '@mui/icons-material/Key';
 import Image from 'next/image';
 // import { NavLink, useNavigate } from 'react-router';
 import Link from 'next/link';
+import { loginUser } from '@/hooks/loginController';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../../utils/(user)/UserAuthContext';
+import { useAuth } from '../../../../utils/(user)/UserAuthContext';
+import { signIn } from 'next-auth/react'
 import toast, { Toaster } from 'react-hot-toast';
-const login = () => {
+const loginpage = () => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const [message, setMessage] = useState(null);
     const loginForm = useRef();
     const router = useRouter();
-    // Simple function to handle form submission
-
-
-    const { loginUser } = useAuth();
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         const email = loginForm.current.email.value;
         const password = loginForm.current.password.value;
-        const userInfo = { email, password }
         try {
+            // ✅ Call server action that checks status BEFORE signIn
+            const result = await loginUser('portal', email, password);
 
-            const result = await loginUser(userInfo);
-            if (result.success) {
+            console.log("Login result:", result);
+
+            if (!result.success) {
+                // ✅ Display specific error message
+                toast.error(result.error);
                 setLoading(false);
-                setSuccess(true);
-                toast.success('Login successful!');
-                router.push('/home');
+                return;
             }
-            // if (result.status === 200) {
-            //     setLoading(true);
-            //     setError(null);
-            //     setSuccess(false);
-            // }
+            if (result.success) {
+                toast.success(result.message);
 
-        }
-        //     router.push('/home');
-        // toast.success('Login successful!');
-        // console.log('Login Successful:', result.data);
-        // console.log('User ID:', result.data.userId);
+                const response = await signIn('portal', {
+                    email,
+                    password,
+                    redirect: false,
+                });
+                console.log("Sign-in result:", response);
+                if (response.ok) {
 
-        // --- NEXT STEP IN A REAL APP ---
-        // router.push('/dashboard'); // Redirect user to a protected route
-        catch (err) {
-            console.error('Network Error:', err);
-            setError('A network error occurred. Please check your connection.');
+                    setLoading(false);
+
+                }
+            }
+        } catch (err) {
+            console.error("Login error:", err);
+            toast.error("An unexpected error occurred. Please try again.");
         } finally {
             setLoading(false);
+            router.push('/home');
+            router.refresh();
         }
-    };
+    }
+
     return (
         <>
 
@@ -128,7 +132,7 @@ const login = () => {
                         {/* "Already member" link */}
                         <p className="text-sm text-gray-800 mt-6 text-center">
                             New User? {' '}
-                            <Link href="/signup" className="text-[#8D6E42] hover:underline font-medium">
+                            <Link href="/auth/signup" className="text-[#8D6E42] hover:underline font-medium">
                                 Sign Up
                             </Link>
                         </p>
@@ -142,9 +146,8 @@ const login = () => {
                 </div>
 
             </div>
-            <Toaster />
         </>
     )
 }
 
-export default login
+export default loginpage;

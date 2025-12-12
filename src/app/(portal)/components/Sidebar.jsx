@@ -18,11 +18,8 @@ const PROFILE_SRC = '/assets/Testmonial1.png';
 import toast, { Toaster } from 'react-hot-toast';
 import { Logout } from "@mui/icons-material";
 
-const Sidebar = () => {
-    const { isCollapsed, toggleSidebar } = useContext(SidebarContext) || {
-        isCollapsed: false,
-        toggleSidebar: () => { }
-    };
+const Sidebar = ({ isCollapsed, toggleSidebar }) => {
+
     const router = useRouter();
     const pathname = usePathname() || '';
     const { user, logoutUser } = useAuth();
@@ -37,7 +34,7 @@ const Sidebar = () => {
         }
     }
     return (
-        <aside className={` transition-all primary-300 ease-in-out ${isCollapsed ? 'w-20' : 'w-64'} bg-white border-r border-gray-200 flex flex-col my-2 relative`}>
+        <aside className={` transition-all primary-300 ease-in-out ${isCollapsed ? 'w-20' : 'w-55'} bg-white border-r border-gray-200 flex flex-col my-2 relative`}>
             <div className="p-4 border-b border-gray-100 relative">
                 <div className="flex items-center">
                     <Image src={PROFILE_SRC} alt="Profile" width={40} height={40} className="rounded-full mr-3" />
@@ -60,22 +57,22 @@ const Sidebar = () => {
             </div>
 
             <nav className={`transition-all duration-300 ease-in-out flex flex-col gap-1 p-2`}>
-                <Link href="/dashboard/home" title={isCollapsed ? 'Dashboard' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 text-black ${isActive('/dashboard/home') ? 'bg-primary-300 text-white' : 'hover:bg-gray-300 '}`}>
+                <Link href="/dashboard/home" title={isCollapsed ? 'Dashboard' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 text-black ${isActive('/dashboard/home') ? 'bg-primary-500 text-white' : 'hover:bg-gray-300 '}`}>
                     <LayoutDashboardIcon size={22} className="mr-2" aria-hidden />
                     {!isCollapsed && <span className="text-sm">Dashboard</span>}
                 </Link>
 
-                <Link href="/dashboard/courses" title={isCollapsed ? 'Courses' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/dashboard/courses') ? 'bg-primary-300 text-white' : 'hover:bg-gray-300 '}`}>
+                <Link href="/dashboard/courses" title={isCollapsed ? 'Courses' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/dashboard/courses') ? 'bg-primary-500 text-white' : 'hover:bg-gray-300 '}`}>
                     <Library size={22} className="mr-2" aria-hidden />
                     {!isCollapsed && <span className="text-sm">Courses</span>}
                 </Link>
 
-                <Link href="/dashboard/tasks" title={isCollapsed ? 'Tasks' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/dashboard/tasks') ? 'bg-primary-300 text-white' : 'hover:bg-gray-300 '}`}>
+                <Link href="/dashboard/tasks" title={isCollapsed ? 'Tasks' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/dashboard/tasks') ? 'bg-primary-500 text-white' : 'hover:bg-gray-300 '}`}>
                     <FileCheck size={22} className="mr-2" aria-hidden />
                     {!isCollapsed && <span className="text-sm">Tasks</span>}
                 </Link>
 
-                <Link href="/dashboard/todo" title={isCollapsed ? 'To Do' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/dashboard/todo') ? 'bg-primary-300 text-white' : 'hover:bg-gray-300 '}`}>
+                <Link href="/dashboard/todo" title={isCollapsed ? 'To Do' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/dashboard/todo') ? 'bg-primary-500 text-white' : 'hover:bg-gray-300 '}`}>
                     <ListCheck size={22} className="mr-2" aria-hidden />
                     {!isCollapsed && <span className="text-sm">To Do</span>}
                 </Link>
@@ -85,18 +82,18 @@ const Sidebar = () => {
                         {!isCollapsed && <span className="text-sm">Projects</span>}
                     </Link> */}
 
-                <Link href="/dashboard/calendar" title={isCollapsed ? 'Calendar' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/dashboard/calendar') ? 'bg-primary-300 text-white' : 'hover:bg-gray-300 '}`}>
+                <Link href="/dashboard/calendar" title={isCollapsed ? 'Calendar' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/dashboard/calendar') ? 'bg-primary-500 text-white' : 'hover:bg-gray-300 '}`}>
                     <Calendar size={22} className="mr-2" aria-hidden />
                     {!isCollapsed && <span className="text-sm">Calendar</span>}
                 </Link>
 
 
-                <Link href="/home" title={isCollapsed ? 'Back To Portal' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/') ? 'bg-primary-300 text-white' : 'hover:bg-gray-300 '}`}>
+                <Link href="/home" title={isCollapsed ? 'Back To Portal' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/') ? 'bg-primary-500 text-white' : 'hover:bg-gray-300 '}`}>
                     <House size={22} className="mr-2" aria-hidden />
                     {!isCollapsed && <span className="text-sm">Back To Portal</span>}
                 </Link>
 
-                <Link href="/dashboard/invoices" title={isCollapsed ? 'Invoices' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/dashboard/invoices') ? 'bg-primary-300 text-white' : 'hover:bg-gray-300 '}`}>
+                <Link href="/dashboard/invoices" title={isCollapsed ? 'Invoices' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/dashboard/invoices') ? 'bg-primary-500 text-white' : 'hover:bg-gray-300 '}`}>
                     <ReceiptText size={22} className="mr-2" aria-hidden />
                     {!isCollapsed && <span className="text-sm">Invoices</span>}
                 </Link>
@@ -107,29 +104,9 @@ const Sidebar = () => {
                         {!isCollapsed && <span className="text-sm whitespace-nowrap">Messages</span>}
                     </button>
 
-                    {!isCollapsed && (
-                        <div className="ml-8 mt-1">
-                            <div className="flex items-center justify-between text-xs py-1">
-                                <span className="text-gray-600">Unread</span>
-                                <span className="bg-gray-200 text-gray-700 rounded-full px-2 py-0.5">3</span>
-                            </div>
-                            <div className="flex items-center justify-between text-xs py-1">
-                                <span className="text-gray-600">Important</span>
-                                <span className="bg-gray-200 text-gray-700 rounded-full px-2 py-0.5">4</span>
-                            </div>
-                            <div className="flex items-center justify-between text-xs py-1">
-                                <span className="text-gray-600">Archived</span>
-                                <span className="bg-gray-200 text-gray-700 rounded-full px-2 py-0.5">70</span>
-                            </div>
-                            <div className="flex items-center justify-between text-xs py-1">
-                                <span className="text-gray-600">All</span>
-                                <span className="bg-gray-200 text-gray-700 rounded-full px-2 py-0.5">77</span>
-                            </div>
-                        </div>
-                    )}
                 </div>
 
-                <Link href="/dashboard/settings" title={isCollapsed ? 'Settings' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/dashboard/settings') ? 'bg-primary-300 text-white' : ' hover:bg-gray-200 '}`}>
+                <Link href="/dashboard/settings" title={isCollapsed ? 'Settings' : undefined} className={`px-4 py-2 rounded-lg flex items-center transition-colors duration-200 ${isActive('/dashboard/settings') ? 'bg-primary-500 text-white' : ' hover:bg-gray-200 '}`}>
                     <Settings size={22} className="mr-2" />
                     {!isCollapsed && <span className="text-sm">Settings</span>}
                 </Link>

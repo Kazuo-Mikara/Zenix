@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongoose";
-// import Course from '../../../../models/Courses/Course';
+import Courses from '@/models/Courses/courseModel';
 import SkillShare from "../../../../models/Courses/SkillShare";
 const CoursePlatformHandler = (coursePlatform) => {
     switch (coursePlatform) {
@@ -12,8 +12,10 @@ const CoursePlatformHandler = (coursePlatform) => {
             return edX;
         case 'Skillshare':
             return SkillShare;
+        case 'Zenix':
+            return Courses;
         default:
-            return SkillShare;
+            return Courses;
     }
 }
 export async function POST(request) {

@@ -6,13 +6,13 @@ export async function GET() {
     try {
         await dbConnect();
 
-        const userTimeline = await Users.find({}) 
-            .sort({ createdAt: -1 }) 
-            .limit(5)                 
-            .select('firstName lastName email createdAt role') 
-            .lean();         
+        const userTimeline = await Users.find({})
+            .sort({ createdAt: -1 })
+            .limit(5)
+            .select('firstName lastName email createdAt role status')
+            .lean();
 
-      
+
         return NextResponse.json({ userTimeline }, { status: 200 });
 
     } catch (error) {

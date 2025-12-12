@@ -35,7 +35,7 @@ export default function HomePage() {
                         alt="Course"
                         className="w-full h-64 object-cover"
                     />
-                    <button className="absolute top-4 right-4 bg-white p-1.5 rounded-full hover:bg-primary hover:text-white">
+                    <button className="absolute top-4 right-4 bg-white p-1.5 rounded-full hover:bg-primary-300 hover:text-white">
                         <BookmarkBorderIcon fontSize="medium" />
                     </button>
                     <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent text-white">
@@ -105,7 +105,7 @@ export default function HomePage() {
                                 <h3 className="text-sm font-medium mb-1">Introduction to UX/UI design</h3>
                                 <p className="text-xs text-gray-500 mb-2">by Andry Rezak</p>
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs bg-primary text-gray-100 px-2 py-0.5 rounded">Beginning</span>
+                                    <span className="text-xs bg-primary-300 text-gray-100 px-2 py-0.5 rounded">Beginning</span>
                                     <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded">100% completed</span>
                                 </div>
                                 <div className="text-xs text-gray-500">Tasks 0/5</div>
@@ -127,7 +127,7 @@ export default function HomePage() {
                             <h3 className="text-sm font-medium mb-1">Creativity in Logo design</h3>
                             <p className="text-xs text-gray-500 mb-2">by PRO IT School</p>
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-xs bg-primary text-gray-100 px-2 py-0.5 rounded">Intermediate</span>
+                                <span className="text-xs bg-primary-300 text-gray-100 px-2 py-0.5 rounded">Intermediate</span>
                                 <span className="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded">50% done</span>
                             </div>
                             <div className="text-xs text-gray-500">Tasks 3/6</div>
@@ -150,7 +150,7 @@ export default function HomePage() {
                             <h3 className="text-sm font-medium mb-1">Typography and Font Pairs</h3>
                             <p className="text-xs text-gray-500 mb-2">by QCity</p>
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-xs bg-primary  text-gray-50 px-2 py-0.5 rounded">Advanced</span>
+                                <span className="text-xs bg-primary-300  text-gray-50 px-2 py-0.5 rounded">Advanced</span>
                                 <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded">premium</span>
                             </div>
                             <div className="text-xs text-gray-500">Tasks 3/9</div>
@@ -164,7 +164,7 @@ export default function HomePage() {
                 <div className="flex  justify-between items-center mb-4 ">
                     <h2 className="text-lg font-semibold">Popular courses</h2>
                     <button className="flex items-center text-gray-500 text-sm">
-                        <a className="text-gray-500 hover:text-primary hover:underline cursor-pointer">View all</a>
+                        <a className="text-gray-500 hover:text-primary-300 hover:underline cursor-pointer">View all</a>
                         {/* <Icon fontSize="small" className="ml-1" /> */}
                     </button>
                 </div>
@@ -186,7 +186,7 @@ export default function HomePage() {
                             <h3 className="text-sm font-medium mb-1 capitalize">How to Win People At Work Or in daily life</h3>
                             <p className="text-xs text-gray-500 mb-2">by Mikara Kazuo</p>
                             <div className="flex items-center justify-start gap-2 mb-2">
-                                <span className="text-xs bg-primary text-gray-100 px-2 py-0.5 rounded">Beginning</span>
+                                <span className="text-xs bg-primary-300 text-gray-100 px-2 py-0.5 rounded">Beginning</span>
                                 <span className="text-xs bg-yellow-600 text-yellow-50 px-2 py-0.5 rounded">36h</span>
 
                             </div>
@@ -208,7 +208,7 @@ export default function HomePage() {
                             <h3 className="text-sm font-medium mb-1">How to Be A Good Cook at Home</h3>
                             <p className="text-xs text-gray-500 mb-2">by Kazuo Mikara</p>
                             <div className="flex items-center justify-start gap-2 mb-2">
-                                <span className="text-xs bg-primary text-gray-100 px-2 py-0.5 rounded">Beginning</span>
+                                <span className="text-xs bg-primary-300 text-gray-100 px-2 py-0.5 rounded">Beginning</span>
                                 <span className="text-xs bg-yellow-600 text-yellow-50 px-2 py-0.5 rounded">40h</span>
                             </div>
                         </div>
@@ -229,7 +229,7 @@ export default function HomePage() {
                             <h3 className="text-sm font-medium mb-1 ">Artificial Intelligence & Machine Learning with Python</h3>
                             <p className="text-xs text-gray-500 mb-2">by Andy Lau</p>
                             <div className="flex items-center justify-start gap-2 mb-2">
-                                <span className="text-xs bg-primary text-gray-100 px-2 py-0.5 rounded">Intermediate</span>
+                                <span className="text-xs bg-primary-300 text-gray-100 px-2 py-0.5 rounded">Intermediate</span>
                                 <span className="text-xs bg-yellow-600 text-yellow-50 px-2 py-0.5 rounded">56h</span>
                             </div>
 

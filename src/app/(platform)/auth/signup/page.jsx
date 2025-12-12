@@ -1,43 +1,58 @@
 'use client'
-import React, { useEffect, useRef } from 'react';
-import student_img from "../../../../public/assets/anime_student.png"
+import React, { useEffect, useRef, useState } from 'react';
+import student_img from "../../../../../public/assets/anime_student.png"
 import MailIcon from '@mui/icons-material/Mail';
 import KeyIcon from '@mui/icons-material/Key';
+import { User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../../utils/(user)/UserAuthContext';
 import toast, { Toaster } from 'react-hot-toast';
-
+import axios from 'axios';
 
 const signup = () => {
+
     const router = useRouter();
-    const signupref = useRef();
-    const { registerUser } = useAuth();
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+    });
+    const [loading, setLoading] = useState(false);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
     useEffect(() => {
 
     }, [])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
-            const name = signupref.current.username.value;
-            const email = signupref.current.email.value;
-            const password = signupref.current.password.value;
-            const userInfo = { name, email, password };
-
-            const message = await registerUser(userInfo);
-
-            if (message) {
-                toast.success(message);
-                // Redirect to login page after successful registration
-                router.replace('/login');
+            const result = await axios.post('/api/register', formData);
+            if (result.data.success) {
+                toast.success('Registration successful!');
+                setTimeout(() => {
+                    router.push('/auth/login');
+                }, 1000);
+            } else {
+                toast.error(result.data.error || 'Registration failed');
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.error('Registration error:', error);
-            toast.error('Registration failed: ' + error.message);
+            const errorMessage = error.response?.data?.error || 'An error occurred during registration';
+            toast.error(errorMessage);
+        } finally {
+            setLoading(false);
         }
-    }
+    };
+
     return (
         <div className="p-10  bg-linear-to-br w-full h-screen  flex items-center justify-center">
             {/* White card container */}
@@ -48,20 +63,38 @@ const signup = () => {
                     <h2 className="text-xl  text-gray-800 mb-6 text-center font-nunito">Empower your learning with EduPath</h2>
                     <h2 className="text-xl  text-gray-800 mb-6 text-center font-nunito">Sign Up</h2>
 
-                    <form className="space-y-4" ref={signupref} onSubmit={handleSubmit}>
+                    <form className="space-y-4" onSubmit={handleSubmit}>
 
 
-                        {/* Email Input */}
+                        {/* FirstName Input */}
                         <div className="relative">
                             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-800">
-                                {/* Email Icon */}
-                                <MailIcon strokeWidth={3} fontSize='medium' />
+                                {/* User Icon */}
+                                <User strokeWidth={3} fontSize='medium' />
                             </span>
                             <input
                                 type="text"
-                                name="username"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleChange}
                                 className="w-full py-3 pl-10  outline-none pr-3 border-b border-b-gray-800 placeholder-gray-400"
-                                placeholder="Your Username"
+                                placeholder="Your First Name"
+
+
+                            />
+                        </div>
+                        <div className="relative">
+                            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-800">
+                                {/* User Icon */}
+                                <User strokeWidth={3} fontSize='medium' />
+                            </span>
+                            <input
+                                type="text"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                                className="w-full py-3 pl-10  outline-none pr-3 border-b border-b-gray-800 placeholder-gray-400"
+                                placeholder="Your Last Name"
 
 
                             />
@@ -75,6 +108,8 @@ const signup = () => {
                             <input
                                 type="email"
                                 name="email"
+                                value={formData.email}
+                                onChange={handleChange}
                                 className="w-full py-3 pl-10  outline-none pr-3 border-b border-b-gray-800 placeholder-gray-400"
                                 placeholder="Your Email"
 
@@ -91,6 +126,8 @@ const signup = () => {
                             <input
                                 type="password"
                                 name="password"
+                                value={formData.password}
+                                onChange={handleChange}
                                 className="w-full py-3 pl-10 pr-3 outline-none placeholder-gray-400 border-b border-b-gray-800 "
                                 placeholder="Password"
                             />
@@ -123,7 +160,7 @@ const signup = () => {
                     {/* "Already member" link */}
                     <p className="text-sm text-gray-800 mt-6 text-center">
                         Already a user? {' '}
-                        <Link href="/login" className="text-[#8D6E42] hover:underline font-medium">
+                        <Link href="/auth/login" className="text-[#8D6E42] hover:underline font-medium">
                             Log In
                         </Link>
                     </p>

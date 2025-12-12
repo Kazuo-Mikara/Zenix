@@ -2,7 +2,7 @@ import axios from "axios";
 
 const getUsers = async ({ page, perPage, coursePlatform, sortField, sortOrder }) => {
     try {
-        const response = await axios.post('/api/getUsers', {
+        const response = await axios.post('/api/users', {
             page: page,
             perPage: perPage,
             coursePlatform: coursePlatform,

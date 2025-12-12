@@ -6,7 +6,6 @@ const AuthLayout = ({ children }) => {
         <AuthProvider>
             <div>
                 {children}
-                <Footer />
             </div>
         </AuthProvider>
     )

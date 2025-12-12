@@ -1,27 +1,35 @@
 
+
 import Link from 'next/link'
+import { signOut, useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { useAuth } from '@/utils/(user)/UserAuthContext'
 import ProfileDropDown from '@/components/examples/dropdown-menu/profile/dropdown-menu-profile-1'
-import { toast, Toaster } from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
+import { useAuth } from '@/utils/(user)/UserAuthContext'
 export default function NavBar() {
-    const { user, logoutUser, isAuthenticated } = useAuth();
+    const { data: session, status } = useSession();
+    console.log(session);
+    const [user, setUser] = useState(null);
     const pathname = usePathname() || ''
+    const role = session?.user?.role;
     const isActive = (p) => pathname === p || pathname.startsWith(p + '/')
     const handleLogout = async () => {
         try {
-            const response = await logoutUser();
-            if (response?.message) {
-                toast.success(response.message);
-            }
+            toast.success("Signing out successfully");
+            // Use redirect: false to prevent immediate redirect and allow toast to show
+            await signOut({ redirect: false });
         } catch (error) {
             console.error("Logout error:", error);
             toast.error('Logout Failed: ' + (error?.message || 'Unknown error'));
         }
     }
+
     useEffect(() => {
-    }, [isAuthenticated])
+        if (status === 'authenticated') {
+            setUser(session.user);
+        }
+    }, [session, status])
     return (
         // <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm shadow-md">
         <header className="sticky top-0 z-50 flex items-center justify-center whitespace-nowrap border-b border-solid border-gray-300 dark:border-border-dark bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
@@ -38,23 +46,23 @@ export default function NavBar() {
                 </div>
                 <div>
                     {
-                        isAuthenticated ?
+                        status === 'authenticated' && role != 'admin' ?
                             <div className='flex items-center justify-between gap-5'>
 
                                 <Link href="/dashboard/home" className="px-3 py-2 bg-primary-400 text-white rounded">Dashboard</Link>
-                                <ProfileDropDown name={user?.firstName + ' ' + user?.lastName} email={user?.email} onLogout={handleLogout} />
+                                <ProfileDropDown name={user?.firstName + ' ' + user?.lastName} email={user?.email} onLogout={handleLogout} plan="Free" />
                             </div>
                             :
                             <div className='flex items-center justify-between gap-5'>
-                                <Link href="/login" className="px-5 py-2 bg-primary-400 text-white rounded-2xl">Login</Link>
-                                <Link href="/signup" className="px-3 py-2 bg-white text-primary border-2 border-gray-300 rounded-2xl">Signup</Link>
+                                <Link href="/auth/login" className="px-5 py-2 bg-primary-400 text-white rounded-2xl">Login</Link>
+                                <Link href="/auth/signup" className="px-3 py-2 bg-white text-primary border-2 border-gray-300 rounded-2xl">Signup</Link>
                             </div>
 
                     }
                 </div>
 
             </div>
-            <Toaster />
+
         </header>
     )
 }

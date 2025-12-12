@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 // Configure axios defaults for cookie handling
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = typeof window !== 'undefined' ? window.location.origin : 'https://zenix-one.vercel.app';
+axios.defaults.baseURL = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
 
 const AdminAuthContext = createContext({
     admin: null,
@@ -32,6 +32,15 @@ export const AdminAuthProvider = ({ children }) => {
             setAdmin(session.user);
             setLoading(false);
         } else if (status === 'unauthenticated') {
+            setAdmin(null);
+            setLoading(false);
+
+            if (!isOnAuthPage) {
+                router.push('/admin_dashboard/auth/register');
+            }
+        }
+
+        else if (session?.user?.role !== 'admin') {
             setAdmin(null);
             setLoading(false);
 

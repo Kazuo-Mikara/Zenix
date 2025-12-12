@@ -43,12 +43,16 @@ export default function DashboardLayout({ children }) {
     const [isDropdown, setDropdown] = useState(false);
     const { user, logoutUser } = useAuth();
     const isActive = (path) => pathname === path || pathname.startsWith(path + '/');
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const toggleSidebar = () => {
+        setIsCollapsed(!isCollapsed);
+    };
     return (
         <AuthProvider>
             <div className="flex h-screen bg-white">
                 {/* Sidebar */}
 
-                <Sidebar />
+                <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
                 {/* Main Content */}
                 <div className="flex-1 flex flex-col transition-all duration-300 ease-in-out">
                     {/* Top Navigation */}

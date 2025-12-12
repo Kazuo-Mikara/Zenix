@@ -32,7 +32,7 @@ const AdminRegisterPage = () => {
             const result = await axios.post('/api/admin/admins/add', formData);
             if (result.data.success) {
                 toast.success('Registration successful!');
-               
+
                 setTimeout(() => {
                     router.push('/admin_dashboard/auth/login');
                 }, 1000);

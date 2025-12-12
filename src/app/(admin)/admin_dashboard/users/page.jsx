@@ -373,7 +373,7 @@ const page = () => {
                                     </td>
                                     <td className='px-6 py-4 flex space-x-2'>
                                         <Link
-                                            href={`/admin_dashboard/users/edit/id=${user._id}`}
+                                            href={`/admin_dashboard/users/edit/${user._id}`}
                                             className="p-2 text-primary-200 rounded-lg hover:bg-indigo-50 transition"
                                             title="Edit User"
                                         >

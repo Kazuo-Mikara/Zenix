@@ -2,7 +2,9 @@
 
 import React, { useState } from 'react'
 import { Shield, User, LockKeyhole } from 'lucide-react'
+import { loginUser } from '@/hooks/loginController'
 import { signIn } from 'next-auth/react'
+
 import { useRouter } from 'next/navigation'
 import { toast, Toaster } from 'react-hot-toast'
 import Link from 'next/link'
@@ -27,27 +29,41 @@ const AdminLoginPage = () => {
         setLoading(true);
 
         try {
-            const result = await signIn('admin', {
-                email: formData.email,
-                password: formData.password,
-                redirect: false,
-            });
+            // ✅ Call server action that checks status BEFORE signIn
+            const result = await loginUser('admin', formData.email, formData.password);
 
-            if (result?.error) {
-                toast.error('Invalid credentials or not an admin user');
-            } else if (result?.ok) {
-                toast.success('Login successful!');
-                setTimeout(() => {
-                    router.push('/admin_dashboard');
-                }, 1000);
+            console.log("Login result:", result);
+
+            if (!result.success) {
+                // ✅ Display specific error message
+                toast.error(result.error);
+                setLoading(false);
+                return;
             }
-        } catch (error) {
-            console.error('Login error:', error);
-            toast.error('An error occurred during login');
+            if (result.success) {
+                toast.success(result.message);
+
+                const response = await signIn('admin', {
+                    email: formData.email,
+                    password: formData.password,
+                    redirect: false,
+                });
+                console.log("Sign-in result:", response);
+                if (response.ok) {
+
+                    setLoading(false);
+
+                }
+            }
+        } catch (err) {
+            console.error("Login error:", err);
+            toast.error("An unexpected error occurred. Please try again.");
         } finally {
             setLoading(false);
+            router.push('/admin_dashboard/');
+            router.refresh();
         }
-    };
+    }
 
     return (
         <>

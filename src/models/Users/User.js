@@ -1,9 +1,9 @@
 // models/user.model.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs'; // For password hashing
-
+import courseModel from '@/models/Courses/courseModel';
 const enrollmentSchema = new mongoose.Schema({
-    courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
+    courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Courses', required: true },
     enrollmentDate: { type: Date, default: Date.now },
     progress: {
         completedModules: { type: Number, default: 0 },
@@ -12,7 +12,7 @@ const enrollmentSchema = new mongoose.Schema({
         lastAccessed: { type: Date, default: Date.now }
     },
     status: { type: String, enum: ['in-progress', 'finished', 'pending'], default: 'pending' },
-    finishedDate: { type: Date } // Optional
+    finishedDate: { type: Date }
 }, { _id: false });
 
 const userSchema = new mongoose.Schema({
@@ -21,8 +21,9 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true, trim: true, lowercase: true },
     status: { type: String, enum: ['active', 'inactive', 'banned'], default: 'active' },
     passwordHash: { type: String, required: true },
-    role: { type: String, enum: ['student', 'mentor', 'admin'], default: 'student' },
+    role: { type: String, enum: ['student', 'mentor', 'instructor', 'admin'], default: 'student' },
     gender: { type: String, enum: ['male', 'female', 'bisexual', 'prefer not to say'] },
+    plan: { type: String, enum: ['free', 'premium'], default: 'free' },
     mentorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Self-referencing for mentor
     enrolledCourses: [enrollmentSchema],
     sessionToken: { type: String },

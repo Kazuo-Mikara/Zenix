@@ -2,7 +2,7 @@ import axios from "axios";
 
 const getCourses = async ({ page, perPage, coursePlatform, sortField, sortOrder }) => {
     try {
-        const response = await axios.post('/api/getCourses', {
+        const response = await axios.post('/api/courses', {
             page: page,
             perPage: perPage,
             coursePlatform: coursePlatform,
