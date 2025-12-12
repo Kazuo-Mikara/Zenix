@@ -55,7 +55,7 @@ const AdminLoginPage = () => {
 
                 if (response?.ok) {
                     // ✅ Redirect only on success
-                    router.push(response.url || '/admin_dashboard');
+                    router.push('/admin_dashboard');
                     router.refresh();
                 } else {
                     // Handle sign-in failure (e.g., credentials mismatch though loginUser checked it)
