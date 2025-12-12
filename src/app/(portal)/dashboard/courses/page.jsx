@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSession } from "next-auth/react"
 import userEnrollment from "@/helpers/Users/userEnrollments"
 import { useQuery } from "@tanstack/react-query";
@@ -8,12 +8,20 @@ import toast from "react-hot-toast";
 
 // import CourseImage from "@assets/Course_img.png"
 export default function DashboardCourses() {
+    return (
+        <Suspense fallback={<div className="mt-4 flex w-full justify-center items-center"><p>Loading...</p></div>}>
+            <DashboardCoursesContent />
+        </Suspense>
+    );
+}
+
+function DashboardCoursesContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const initialFilter = searchParams.get('filter') || 'all';
     const [activeFilter, setActiveFilter] = useState('all');
     const { data: session } = useSession();
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false); // Unused
     const { data: userEnrollments, isLoading } = useQuery({
         queryKey: ["userEnrollments", session?.user?.id],
         queryFn: () => userEnrollment(session?.user?.id),
@@ -25,7 +33,7 @@ export default function DashboardCourses() {
         setActiveFilter(filterValue);
         router.push(`?filter=${filterValue}`);
     };
-    console.log(userEnrollments)
+    // console.log(userEnrollments)
     const filterOptions = [
         { label: 'All', value: 'all' },
         { label: 'In Progress', value: 'in-progress' },
@@ -49,7 +57,7 @@ export default function DashboardCourses() {
                                 <div class="text-primary flex items-center justify-center pl-4">
                                     <span class="material-symbols-outlined">search</span>
                                 </div>
-                                <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-primary focus:outline-0 focus:ring-0 border-none bg-transparent focus:border-none h-full placeholder:text-primary/60 px-2 text-base font-normal leading-normal" placeholder="Search my courses..." value="" />
+                                <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-primary focus:outline-0 focus:ring-0 border-none bg-transparent focus:border-none h-full placeholder:text-primary/60 px-2 text-base font-normal leading-normal" placeholder="Search my courses..." />
                             </div>
                         </label>
                     </div>
@@ -83,7 +91,7 @@ export default function DashboardCourses() {
                         ) : (
                             userEnrollments?.enrolledCourses?.length > 0 ? (
                                 userEnrollments?.enrolledCourses?.map((course) => (
-                                    <div class="flex flex-col gap-4 rounded-xl bg-white/5 p-4 transition-all hover:bg-white/10 hover:shadow-2xl hover:shadow-black/20">
+                                    <div class="flex flex-col gap-4 rounded-xl bg-white/5 p-4 transition-all hover:bg-white/10 hover:shadow-2xl hover:shadow-black/20" key={course.courseId._id}>
                                         <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg" data-alt="Digital art of neural networks for a machine learning course" style={{ backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuCDWoE-G7SQRb_n2bLTOcvkFp7TqYBTI8rV93TieioTb0BKrwXhLdqpHH_T4JPSxUILP8Vgdd_Gt92Mhx7im7KHErycmmMMz6dAi157Ab36WJPklb303NtaD2AT3v3DSa5B92XuUuhf4z7CLs5Lrb0PocP9GH3Q-Xc7ha7OZTfoK7lyN28enQ5rAA3DRuXwi5RDwPdmU4JovMbXl5z6Ol2x0vaDzN7iPK4la6vjl9qUhvig0QhqrhaieM5jRCBLHT43kyiyFlu3RxsD")` }}></div>
                                         <div class="flex flex-col gap-3">
                                             <p class="text-gray-600 text-lg font-bold leading-normal">{course.courseId.title}</p>
