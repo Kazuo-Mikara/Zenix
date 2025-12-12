@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react'
 // Configure axios defaults
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+axios.defaults.baseURL = typeof window !== 'undefined' ? window.location.origin : 'https://zenix-edu.netlify.app/';
 
 const AuthContext = createContext({
     user: null,

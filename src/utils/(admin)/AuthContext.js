@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 // Configure axios defaults for cookie handling
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+axios.defaults.baseURL = typeof window !== 'undefined' ? window.location.origin : 'https://zenix-edu.netlify.app/';
 
 const AdminAuthContext = createContext({
     admin: null,
