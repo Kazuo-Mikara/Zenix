@@ -66,7 +66,7 @@ const AdminLoginPage = () => {
         } catch (err) {
             console.error("Login error:", err);
             toast.error("An unexpected error occurred. Please try again.");
-            setLoading(fals e);
+            setLoading(false);
         }
     }
 
