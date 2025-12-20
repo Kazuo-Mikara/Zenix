@@ -20,16 +20,16 @@ const Home = () => {
     },)
     return (
         <>
-            <div className="z-0 bg-gray-50">
-                <div className=" bg-white shadow-lg rounded-lg ">
+            <div className="z-0 bg-gray-50 dark:bg-gray-900">
+                <div className=" bg-white dark:bg-gray-900 shadow-lg rounded-lg ">
                     <main className="p-12">
                         <section className="text-center">
                             <div class="relative">
                                 <p class="text-primary-400 font-semibold">START TO SUCCESS</p>
-                                <h2 class="text-4xl md:text-6xl font-bold text-gray-800 mt-4 leading-tight">
+                                <h2 class="text-4xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 mt-4 leading-tight">
                                     Learn <span class="text-primary-400">Anything</span><br />at Your <span class="text-span">Pace</span>
                                 </h2>
-                                <p class="text-gray-600 mt-6 max-w-2xl mx-auto font-poppins">
+                                <p class="text-gray-600 dark:text-gray-400 mt-6 max-w-2xl mx-auto font-poppins">
 
                                     ZenEd offers a flexible and affordable way to learn new skills. With over 200,000 courses, you can learn anything from coding to cooking.
                                 </p>
@@ -52,53 +52,53 @@ const Home = () => {
                                 <FacebookIcon className="w-12 h-12" />
                             </div>
                         </section>
-                        <section class="py-12 md:py-20 bg-gray-50 -mx-6 md:-mx-12 px-6 md:px-12">
-                            <h3 class="text-3xl font-bold text-center font-nunito text-primary">Browse Our Top Courses</h3>
+                        <section class="py-12 md:py-20 bg-gray-50 dark:bg-gray-900 -mx-6 md:-mx-12 px-6 md:px-12">
+                            <h3 class="text-3xl font-bold text-center font-nunito text-primary dark:text-gray-100">Browse Our Top Courses</h3>
                             <p class="text-center text-text  font-poppins mt-2">Explore our most popular courses for skill development.</p>
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-                                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                                    <img alt="Course thumbnail for UI/UX Design" class="w-full h-40 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBx86-g-sIaAwdR3Y9QWDnc640qVHw2isaGlxxdQmhWR7BoLvay5sDN8wjYPxT9dLA8OdrT6b2BDItNBWISizu2nKdnB27hiDqDWOowkrOr9tObKT4mR0YRFpot-OcSwvYXpSm3yHOWEFOoKXKK4AMIv_16sgpatlt3Yyg_wMUzlOyKtYyuSqbz23dp3-2sB__8T1vIDQpdu4IJR6x3txje3qAgkkiX52uJNhzPEfz7zJ0FllnLMRP5WVYPGrt-4yajsrnfjYtsDGo" />
+                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                                    <img alt="Course thumbnail for UI/UX Design" class="w-full h-40 object-cover " src="https://lh3.googleusercontent.com/aida-public/AB6AXuBx86-g-sIaAwdR3Y9QWDnc640qVHw2isaGlxxdQmhWR7BoLvay5sDN8wjYPxT9dLA8OdrT6b2BDItNBWISizu2nKdnB27hiDqDWOowkrOr9tObKT4mR0YRFpot-OcSwvYXpSm3yHOWEFOoKXKK4AMIv_16sgpatlt3Yyg_wMUzlOyKtYyuSqbz23dp3-2sB__8T1vIDQpdu4IJR6x3txje3qAgkkiX52uJNhzPEfz7zJ0FllnLMRP5WVYPGrt-4yajsrnfjYtsDGo" />
                                     <div class="p-4">
-                                        <h4 class="font-bold text-lg text-text">UI/UX Design for Beginners</h4>
-                                        <p class="text-gray-600 text-sm mt-2 font-poppins">Master the fundamentals of user interface and experience design.</p>
+                                        <h4 class="font-bold text-lg text-text dark:text-gray-100">UI/UX Design for Beginners</h4>
+                                        <p class="text-gray-600 dark:text-gray-300 text-sm mt-2 font-poppins">Master the fundamentals of user interface and experience design.</p>
                                     </div>
                                 </div>
-                                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                                     <img alt="Course thumbnail for Web Development" class="w-full h-40 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl6Bww_Dc7Uiax9kl_au0Wym9IyHwi8LFZam81rmskwBB2jovFhU7cfpfDJVyljG1j0APAn1loZzFQVa_G_XZUYHVzWVesWbXIum7FvKo1KXUwKYSKQ407cUceToUvB8HafWZ53tB7v2lvGJdX0FtATdFHvqhQdzTfYXT8PAPrYcSEecuUTXMPIE7YaI1Z9Uk-lGEEYqPbsnDfFZ8z_CF7mA2giDU4zp7H2fXP1xxdK6S8zpRsbQqBKcHpgffZ7ceNaXUfjbmf6oI" />
                                     <div class="p-4">
-                                        <h4 class="font-bold text-lg text-text">Full-Stack Web Development</h4>
-                                        <p class="text-gray-600 text-sm mt-2 font-poppins">Build stunning websites from scratch with HTML, CSS, &amp; React.</p>
+                                        <h4 class="font-bold text-lg text-text dark:text-gray-100">Full-Stack Web Development</h4>
+                                        <p class="text-gray-600 dark:text-gray-300 text-sm mt-2 font-poppins">Build stunning websites from scratch with HTML, CSS, &amp; React.</p>
                                     </div>
                                 </div>
-                                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                                     <img alt="Course thumbnail for Craft Websites" class="w-full h-40 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYqmS6Wko_JoDvJRqnIj-ok5vgaEA5gkgJoE1ENc3Cgclr8ATyq-nN7PeQv5-S-uweMzXExRq9On3UrmfNqoFdfXpdjbkU1qCs9Kbi3PO_f-7aHptXSv5Y-IO4LbnMpNYkxe38yHemGiHKRhzQroQd9ZhbW7a0ND6fE2LG6coA2kBXBvkPeR-2E1PINGnWoL20nhvRKJb-YxJBDThWYy5udc4RIbsXr00FnjVBtI3Fts1g25mIrpGAxOsvRrFx7SeWVolPVOdloro" />
                                     <div class="p-4">
-                                        <h4 class="font-bold text-lg text-text">My Choice : Craft Websites</h4>
-                                        <p class="text-gray-600 text-sm mt-2 font-poppins">An advanced course on creating bespoke web experiences.</p>
+                                        <h4 class="font-bold text-lg text-text dark:text-gray-100">My Choice : Craft Websites</h4>
+                                        <p class="text-gray-600 dark:text-gray-300 text-sm mt-2 font-poppins">An advanced course on creating bespoke web experiences.</p>
                                     </div>
                                 </div>
-                                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                                <div class="bg-white rounded-lg dark:bg-gray-800 shadow-md overflow-hidden">
                                     <img alt="Course thumbnail for Web Design for Beginners" class="w-full h-40 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzwFWxKa5L0-Lg37buKv-DFRKk6rj2LIt0tvFFPIqJXxW2ZPe2KJzd8kjwNCQZDbaltRj0CwKyGAYjwOooMENE0OKYfI0tYvag71nHtzenbZS9RT7jmpHLcQEM-2RY733I_NyzGA42OOFRAzK3ROd8wlDhjnG-pSu1nbz43pN7TfiEap3xLjQglnp30tMhYoNfB2MFvM8IFN5RfzNcjJjIMMp48YdZbJ5M6J1dkvOf4hCVbea4UulHdG-hXm7tOoevuP_jCFxsh4E" />
                                     <div class="p-4">
-                                        <h4 class="font-bold text-lg text-gray-800">Web Design for Beginners</h4>
-                                        <p class="text-gray-600 text-sm mt-2">Get started with the essentials of modern web design.</p>
+                                        <h4 class="font-bold text-lg text-text dark:text-gray-100">Web Design for Beginners</h4>
+                                        <p class="text-gray-600 dark:text-gray-300 text-sm mt-2 font-poppins">Get started with the essentials of modern web design.</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="text-center mt-12">
-                                <Link href='/courses' class="bg-white border border-primary font-nunito text-primary px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">View All Courses</Link>
+                                <Link href='/courses' class="bg-white border border-primary dark:border-gray-800 font-nunito text-primary dark:bg-gray-800 dark:text-gray-100 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 dark:hover:bg-gray-600">View All Courses</Link>
                             </div>
                         </section>
                         <section class="py-12 md:py-20">
-                            <h3 class="text-3xl font-bold text-center text-gray-800">Our <span class="text-primary">Mission</span> Behind This Platform</h3>
+                            <h3 class="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">Our <span class="text-primary">Mission</span> Behind This Platform</h3>
                             <div class="mt-12 grid md:grid-cols-2 gap-12 items-center">
                                 <div>
                                     <img alt="Diverse group of people collaborating" class="rounded-lg shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnjkUMVtIDC-7-M1ukrRdJvqzcwSsn5jSjBNE29Ti952Sp2iOyz-4OvQ67FVoiUmCiaMymD2j-KBA-DBnnl92vrpx5dACoijhyvw-qprP2aiOZQ9kDQFHvLIGtk7_9Sy4axqdXomphoBSXmrpaxtTNj2kghtkuPQzMlL-rsTGuvFXJOKlQoaUJrOZyjR6xoiVE2B4-3SnuHZNI6Air4TAg3brciamLsf3Nws6OuATVX_B2oA4ADf1VKDjvwnQd57ZLXlJv8KljC3w" />
                                 </div>
                                 <div>
-                                    <h4 class="text-2xl font-bold text-gray-800">Make New Material Instantly Available and Searchable</h4>
-                                    <p class="text-gray-600 mt-4">We believe in breaking down barriers to education. Our platform provides easy access to a vast library of courses, empowering individuals to learn and grow.</p>
-                                    <button class="mt-6 text-primary font-semibold hover:underline">View All Courses </button>
+                                    <h4 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Make New Material Instantly Available and Searchable</h4>
+                                    <p class="text-gray-600 mt-4 dark:text-gray-300">We believe in breaking down barriers to education. Our platform provides easy access to a vast library of courses, empowering individuals to learn and grow.</p>
+                                    <button class="mt-6 text-primary font-semibold hover:underline dark:text-gray-100 hover:cursor-pointer">View All Courses </button>
                                 </div>
                             </div>
                             <div class="mt-16 grid md:grid-cols-2 gap-12 items-center">
@@ -106,9 +106,9 @@ const Home = () => {
                                     <img alt="Laptop screen showing a learning application" class="rounded-lg shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3ZbbJeC0yCrCfAdu9iY_asOSXTpUTXebRGj4zfWhCWgxYvQZU1mWgwSrgmrSPuySC6G5oKdakeRKUtkjH7MOeCnat4_88mdQaL9zeK6KwvP5w8BsEJ_hqOc41waQzro8X6nVwC9LLinZfLLP-hgZGCvop29cevKKIc24ZAaupE0HrLJBPrux05zIoSutleCiudLCE0yQp6xMcHF33oeoZtqVPpOgdsUXMPW6UUZEG4At7hVdkWVbO6w1cPYRBt4h5BtECRVqkWcg" />
                                 </div>
                                 <div class="md:order-1">
-                                    <h4 class="text-2xl font-bold text-gray-800">One Ultimate Study App for Every Class, Every Test</h4>
-                                    <p class="text-gray-600 mt-4">ZenEd is designed to be your all-in-one learning companion. From interactive lessons to progress tracking, everything you need is right at your fingertips.</p>
-                                    <button class=" mt-6 text-primary font-semibold hover:underline">See Details </button>
+                                    <h4 class="text-2xl font-bold text-gray-800 dark:text-gray-100">One Ultimate Study App for Every Class, Every Test</h4>
+                                    <p class="text-gray-600 mt-4 dark:text-gray-300">ZenEd is designed to be your all-in-one learning companion. From interactive lessons to progress tracking, everything you need is right at your fingertips.</p>
+                                    <button class=" mt-6 text-primary font-semibold hover:underline dark:text-gray-100 hover:cursor-pointer">See Details </button>
                                 </div>
                             </div>
                             <div class="mt-16 grid md:grid-cols-2 gap-12 items-center">
@@ -116,42 +116,42 @@ const Home = () => {
                                     <img alt="Team working in a modern office" class="rounded-lg shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSZ0IcPR4YJm1Hbg8yWuIRMSUSa0oqOdQuxitCoWN8uEKQkwX36yDzGAqDoCvziL5oBwqwY6kC6JpU_nKR-zdqERxs1d6_NjxbSG4lVyJL0_tCzxiKMunJsS9NHn4BOeT9R8btVatJabrfmkeWEAtebdIMfHRYzt0w97_jmz7jJEnt1V33HM2YbYBHA8kzW-_0SjnRo9K_WftjtK6GM3WbwJPwsOEWQXGmeEIu-4n7r2thr2b-BwSVKLT_Bervs-si266E_n5v3Vc" />
                                 </div>
                                 <div>
-                                    <h4 class="text-2xl font-bold text-gray-800">Engaging, Dynamic, and Interactive Learning Experiences</h4>
-                                    <p class="text-gray-600 mt-4">We create immersive learning environments that go beyond traditional methods. Our courses are designed to be fun, engaging, and effective.</p>
-                                    <button class="mt-6 text-primary font-semibold hover:underline">View Our Features</button>
+                                    <h4 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Engaging, Dynamic, and Interactive Learning Experiences</h4>
+                                    <p class="text-gray-600 mt-4 dark:text-gray-300">We create immersive learning environments that go beyond traditional methods. Our courses are designed to be fun, engaging, and effective.</p>
+                                    <button class="mt-6 text-primary font-semibold hover:underline dark:text-gray-100 hover:cursor-pointer">View Our Features</button>
                                 </div>
                             </div>
                         </section>
                         <section class="bg-primary text-white mx-6 md:-mx-12 px-6 md:px-12 py-12 rounded-lg">
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                                 <div>
-                                    <p class="text-4xl font-bold">80K+</p>
-                                    <p class="text-indigo-200">Active Students</p>
+                                    <p class="text-4xl font-bold text-primary-300 dark:text-primary-200">80K+</p>
+                                    <p class="text-gray-600 dark:text-gray-300">Active Students</p>
                                 </div>
                                 <div>
-                                    <p class="text-4xl font-bold">45K+</p>
-                                    <p class="text-indigo-200">Total Courses</p>
+                                    <p class="text-4xl font-bold text-primary-300 dark:text-primary-200">45K+</p>
+                                    <p class="text-gray-600 dark:text-gray-300">Total Courses</p>
                                 </div>
                                 <div>
-                                    <p class="text-4xl font-bold">2.5M+</p>
-                                    <p class="text-indigo-200">Online Students</p>
+                                    <p class="text-4xl font-bold text-primary-300 dark:text-primary-200">2.5M+</p>
+                                    <p class="text-gray-600 dark:text-gray-300">Online Students</p>
                                 </div>
                                 <div>
-                                    <p class="text-4xl font-bold">20K+</p>
-                                    <p class="text-indigo-200">5 Star Reviews</p>
+                                    <p class="text-4xl font-bold text-primary-300 dark:text-primary-200">20K+</p>
+                                    <p class="text-gray-600 dark:text-gray-300">5 Star Reviews</p>
                                 </div>
-                            </div>
-                        </section>
+                            </div >
+                        </section >
                         <section class="py-12 md:py-20">
                             <h3 class="text-3xl font-bold text-center text-primary">Our Happy Students Say About Us</h3>
                             <div class="mt-12 relative max-w-2xl mx-auto">
                                 <span class="material-symbols-outlined text-span text-6xl absolute -top-4 -left-8"><FaQuoteLeft /></span>
 
-                                <div class="bg-amber-50 p-8 rounded-lg shadow-md ">
+                                <div class="bg-amber-50 dark:bg-gray-800 p-8 rounded-lg shadow-md ">
                                     <img alt="Portrait of Colvin Agams" class="w-20 h-20 rounded-full mx-auto -mt-16 border-4 border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWDS04CBPuvk6zweR2BkXaUBK3lbFbJmRz50S4g6Tartu3RB3rxrMtZFxjfPwxTHDI_WnTVqkGFEy-T5jBJ6eJUqp3cRyLUKZOWudmfAim9yBBIPKl3F3oN7CV_nTDjdSeNPFL0wDH6RXMt8uZHJNOcldN0YcoE5l_2WsjNSDoE574F5q_8NyaDDBF8QiHk8gZPwyQF-Z-g6kEhQGVchFpLnh2xu90RW_6M0kY68-fhQolpiJuHDGtinbkFWwODMC051IKrGwqBys" />
-                                    <p class="text-center text-gray-600 mt-4">"An amazing platform! The flexibility to learn at my own pace is invaluable. The courses are high-quality and the instructors are experts in their fields."</p>
-                                    <p class="text-center font-bold text-gray-800 mt-4">Colvin Agams</p>
-                                    <p class="text-center text-gray-500 text-sm">Student, Web Development Course</p>
+                                    <p class="text-center text-gray-600 dark:text-gray-200  mt-4">"An amazing platform! The flexibility to learn at my own pace is invaluable. The courses are high-quality and the instructors are experts in their fields."</p>
+                                    <p class="text-center font-bold text-gray-800 dark:text-gray-200 mt-4">Colvin Agams</p>
+                                    <p class="text-center text-gray-500 text-sm dark:text-gray-100/50">Student, Web Development Course</p>
                                 </div>
                                 <span class="material-symbols-outlined text-span text-6xl absolute -bottom-4 -right-8"><FaQuoteRight /></span>
                             </div>
@@ -247,11 +247,11 @@ const Home = () => {
                                 </div>
                             </div>
                         </section>
-                    </main>
+                    </main >
 
-                </div>
+                </div >
 
-            </div>
+            </div >
 
         </>
     )

@@ -1,20 +1,22 @@
 // models/admin.model.js
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs'; // For password hashing
+import bcrypt from 'bcryptjs';
 
 const adminSchema = new mongoose.Schema({
-    userName: { type: String, required: true, trim: true },
+    username: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, trim: true, lowercase: true },
+    role: { type: String, default: 'admin', enum: ['admin', 'super_admin'] },
     status: { type: String, enum: ['active', 'inactive', 'banned'], default: 'active' },
     passwordHash: { type: String, required: true },
-    lastLogin: { type: Date, default: Date.now },
+    sessionToken: { type: String },
+    lastLogin: { type: Date, default: null },
     loginAttempts: { type: Number, default: 0 }
 }, { timestamps: true });
 
 // --- Password Hashing Middleware ---
 // Hash password before saving
 adminSchema.pre('save', async function (next) {
-    if (!this.isModified('passwordHash')) return next(); // Only hash if password changed
+    if (!this.isModified('passwordHash')) return next();
     const salt = await bcrypt.genSalt(10);
     this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
     next();

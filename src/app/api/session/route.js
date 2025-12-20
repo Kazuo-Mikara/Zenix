@@ -1,5 +1,6 @@
 import dbConnect from '../../../lib/mongoose';
-import User from '../../../models/Users/User';
+import Admin from '@/models/Admin/Admin';
+import Users from '@/models/Users/User';
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 
@@ -17,41 +18,39 @@ export async function GET(request) {
 
         await dbConnect();
 
-        // Get the authToken from cookies
-        const cookieHeader = request.headers.get('cookie');
-        console.log('Cookie header received:', cookieHeader);
-
-        if (!cookieHeader) {
-            console.log('No cookie header found');
-            return NextResponse.json({ user: null }, { status: 200 });
-        }
-
-        const cookies = Object.fromEntries(
-            cookieHeader.split(';').map(c => c.trim().split('='))
-        );
-
-        console.log('Parsed cookies:', cookies);
-        const token = cookies.authToken;
-        console.log('Auth token found:', token);
+        const token = request.cookies.get('authToken')?.value;
+        // console.log('Auth token found:', token ? 'Yes' : 'No');
 
         if (!token) {
-            console.log('No authToken found in cookies');
+            // console.log('No authToken found in cookies');
             return NextResponse.json({ user: null }, { status: 200 });
         }
 
         // Verify the JWT token
+        // Verify the JWT token
         let decoded;
         try {
             decoded = jwt.verify(token, JWT_SECRET);
+            // console.log('Decoded Token:', decoded);
         } catch (error) {
-            console.log('Token verification failed:', error);
+            console.log('Token verification failed:', error.message);
             return NextResponse.json({ user: null }, { status: 200 });
         }
 
-        // Find the user in the database
-        const user = await User.findById(decoded.userId).select('-password -sessionToken');
+        // Find the user in the database based on role
+        let user = null;
+        try {
+            if (decoded.role === 'admin' || decoded.role === 'super_admin') {
+                user = await Admin.findById(decoded.userId).select('-passwordHash -password -sessionToken');
+            } else {
+                user = await Users.findById(decoded.userId).select('-password -sessionToken');
+            }
+        } catch (dbError) {
+            console.error('Database lookup error:', dbError);
+        }
 
         if (!user) {
+            console.log('User not found in DB for ID:', decoded.userId, 'Role:', decoded.role);
             return NextResponse.json({ user: null }, { status: 200 });
         }
 
@@ -59,9 +58,10 @@ export async function GET(request) {
         const userData = {
             userId: user._id.toString(),
             email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
             role: user.role || 'user',
+            ...(user.username && { username: user.username }),
+            ...(user.firstName && { firstName: user.firstName }),
+            ...(user.lastName && { lastName: user.lastName }),
         };
 
         return NextResponse.json({ user: userData }, { status: 200 });

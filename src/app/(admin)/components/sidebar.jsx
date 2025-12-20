@@ -30,7 +30,7 @@ const Sidebar = ({ hidden }) => {
         return cleanPathname.startsWith(cleanP + '/');
     };
     return (
-        <aside className={`flex h-auto min-h-screen flex-col bg-white dark:bg-[#111418] transition-all duration-300 ease-in-out overflow-hidden ${hidden ? 'w-20 p-2 border-r border-gray-200 opacity-100' : 'w-68 p-4 border-r border-gray-200 dark:border-[#283039] opacity-100'}`}>
+        <aside className={`flex h-auto min-h-screen flex-col bg-white dark:bg-gray-800 transition-all duration-300 ease-in-out overflow-hidden ${hidden ? 'w-20 p-2 border-r border-gray-200 dark:border-gray-700 opacity-100' : 'w-68 p-4 border-r border-gray-200 dark:border-gray-700 opacity-100'}`}>
             <div className="flex h-full min-h-[700px] flex-col justify-between">
                 <div className="flex flex-col gap-4">
                     <div className="flex items-center gap-4 text-gray-900 dark:text-white mb-4 px-3">
@@ -47,9 +47,9 @@ const Sidebar = ({ hidden }) => {
                                 <Link
                                     href={item.href}
                                     key={index}
-                                    className={`flex items-center gap-3 px-3 py-2 text-gray-600 dark:hover:bg-primary/20 rounded-lg transition-all duration-200 ${isActive(item.href)
+                                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${isActive(item.href)
                                         ? 'bg-primary-400 text-white shadow-primary/30 shadow-lg'
-                                        : 'text-gray-500 hover:bg-gray-50 hover:text-primary-300 hover:cursor-pointer'
+                                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-300 hover:cursor-pointer'
                                         } ${!hidden ? 'justify-start' : 'justify-center'}`}
                                 >
                                     <item.icon className={`h-6 w-6 shrink-0 ${isActive(item.href) ? 'text-white' : 'text-gray-500'}`} />

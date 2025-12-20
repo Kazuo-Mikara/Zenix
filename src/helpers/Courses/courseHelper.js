@@ -1,12 +1,13 @@
 import axios from "axios";
 
-const getCourses = async ({ page, perPage, coursePlatform, sortField, sortOrder }) => {
+const getCourses = async ({ page, perPage, coursePlatform, sortField, difficulty, sortOrder }) => {
     try {
         const response = await axios.post('/api/courses', {
             page: page,
             perPage: perPage,
             coursePlatform: coursePlatform,
             sortField: sortField,
+            difficulty: difficulty,
             sortOrder: sortOrder === 'default' ? null : sortOrder
         });
         const data = response.data; // Now it's defined

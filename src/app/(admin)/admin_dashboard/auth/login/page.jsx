@@ -4,18 +4,19 @@ import React, { useState } from 'react'
 import { Shield, User, LockKeyhole } from 'lucide-react'
 import { loginUser } from '@/hooks/loginController'
 import { signIn } from 'next-auth/react'
-
+import { useAdminAuth } from '@/utils/(admin)/AuthContext';
 import { useRouter } from 'next/navigation'
 import { toast, Toaster } from 'react-hot-toast'
 import Link from 'next/link'
+import axios from 'axios'
 const AdminLoginPage = () => {
+    const { loginAdmin } = useAdminAuth();
     const router = useRouter();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
-    const [loading, setLoading] = useState(false);
-
+    const [Loading, setLoading] = useState(false);
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -30,9 +31,7 @@ const AdminLoginPage = () => {
 
         try {
             // ✅ Call server action that checks status BEFORE signIn
-            const result = await loginUser('admin', formData.email, formData.password);
-
-            console.log("Login result:", result);
+            const result = await loginUser('admin', formData.email, formData.password)
 
             if (!result.success) {
                 // ✅ Display specific error message
@@ -47,15 +46,14 @@ const AdminLoginPage = () => {
                 const response = await signIn('admin', {
                     email: formData.email,
                     password: formData.password,
-                    redirect: false
+                    redirect: false,
                 });
+                console.log(response);
 
-                console.log(formData.email, formData.password);
-                console.log("Sign-in result:", response);
-                if (response?.ok) {
+                if (response?.status === 200) {
                     // ✅ Redirect only on success
-                    // router.push('/admin_dashboard');
-                    // router.refresh();
+                    router.push('/admin_dashboard');
+                    router.refresh();
                     setLoading(false);
 
                 } else {
@@ -68,11 +66,6 @@ const AdminLoginPage = () => {
             console.error("Login error:", err);
             toast.error("An unexpected error occurred. Please try again.");
             setLoading(false);
-        }
-        finally {
-            setLoading(false);
-            router.push('/admin_dashboard');
-            router.refresh();
         }
     }
 
@@ -134,10 +127,10 @@ const AdminLoginPage = () => {
                     <div className="w-full">
                         <button
                             type="submit"
-                            disabled={loading}
+                            disabled={Loading}
                             className="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary-300 text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            <span className="truncate">{loading ? 'Logging in...' : 'Login'}</span>
+                            <span className="truncate">{Loading ? 'Logging in...' : 'Login'}</span>
                         </button>
                     </div>
                 </div>

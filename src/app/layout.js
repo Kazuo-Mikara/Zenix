@@ -1,8 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
+import LenisProvider from "./LenisProvider";
 import QueryProvider from "@/app/QueryProvider";
 import { SessionProvider } from "next-auth/react";
+import { ThemeProvider } from "@/components/theme";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,15 +22,18 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      {/* <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" /> */}
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SessionProvider>
-          <QueryProvider>
-            {children}
-          </QueryProvider>
+          <ThemeProvider defaultTheme="system" storageKey="zenix-theme">
+            <QueryProvider>
+              <LenisProvider>
+                {children}
+              </LenisProvider>
+            </QueryProvider>
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>

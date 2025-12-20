@@ -3,9 +3,22 @@ import Credentials from "next-auth/providers/credentials";
 import dbConnect from "../lib/mongoose";
 import Users from "@/models/Users/User";
 import Admin from "@/models/Admin/Admin";
-
+import Google from "next-auth/providers/google";
+import mongoose from "mongoose";
+import { hashPassword } from "@/utils/password_hash";
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
+        Google({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            authorization: {
+                params: {
+                    access_type: "offline",
+                    prompt: "consent",
+                    response_type: "code",
+                },
+            },
+        }),
         // Admin Provider
         Credentials({
             id: "admin",
@@ -141,6 +154,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         email: user.email,
                         name: `${user.firstName} ${user.lastName}`,
                         role: user.role,
+                        gender: user.gender,
                         firstName: user.firstName,
                         lastName: user.lastName,
                         status: user.status,
@@ -238,24 +252,81 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return true;
         },
 
-        async jwt({ token, user, trigger }) {
-            if (user) {
-                token.id = user.id;
+        async signIn({ account, profile }) {
+            // Only handle Google here
+            if (account?.provider !== "google") return true;
+
+            const email = profile?.email?.toLowerCase();
+            if (!email) return false;
+
+            await dbConnect();
+
+            const fullName = profile?.name || "";
+            const [firstName = "", ...rest] = fullName.trim().split(" ");
+            const lastName = rest.join(" ");
+
+            // Google unique id is usually in profile.sub
+            const googleId = profile?.sub;
+            const password = await hashPassword(googleId);
+
+            await Users.findOneAndUpdate(
+                { email }, // link by email to avoid duplicates
+                {
+                    $setOnInsert: {
+                        email,
+                        role: "student",
+                        status: "active",
+                        plan: "free",
+                        loginAttempts: 0,
+                    },
+                    $set: {
+                        firstName,
+                        lastName,
+                        avatarUrl: profile?.picture, // Google usually provides picture
+                        lastLogin: new Date(),
+                        passwordHash: password,
+                    },
+                },
+                { upsert: true, new: true }
+            );
+
+            return true;
+        },
+        async jwt({ token, user, account, profile, trigger }) {
+            // 1) Credentials login: user.id already your Mongo _id string
+            if (user?.id && mongoose.Types.ObjectId.isValid(user.id)) {
+                token.uid = user.id;
                 token.role = user.role;
                 token.userName = user.userName;
                 token.firstName = user.firstName;
                 token.lastName = user.lastName;
-                token.status = user.status; // ✅ Add status to token
-
+                token.gender = user.gender;
+                token.status = user.status;
             }
 
-            // Check status on every request
-            if (trigger === "update" && token.id) {
-                await dbConnect();
-                const dbUser = await Users.findById(token.id);
-                if (dbUser) {
-                    token.status = dbUser.status;
+            // 2) Google login (first time jwt runs after OAuth)
+            if (account?.provider === "google") {
+                const email = (profile?.email || token.email || "").toLowerCase();
+                if (email) {
+                    await dbConnect();
+                    const dbUser = await Users.findOne({ email });
+                    if (dbUser) {
+                        token.uid = dbUser._id.toString();
+                        token.role = dbUser.role;
+                        token.userName = dbUser.userName;
+                        token.firstName = dbUser.firstName;
+                        token.lastName = dbUser.lastName;
+                        token.gender = dbUser.gender;
+                        token.status = dbUser.status;
+                    }
                 }
+            }
+
+            // 3) Your status refresh logic must use token.uid (Mongo id), not token.id
+            if (trigger === "update" && token.uid && mongoose.Types.ObjectId.isValid(token.uid)) {
+                await dbConnect();
+                const dbUser = await Users.findById(token.uid).select("status");
+                if (dbUser) token.status = dbUser.status;
             }
 
             return token;
@@ -263,11 +334,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         async session({ session, token }) {
             if (token) {
-                session.user.id = token.id;
+                session.user.id = token.uid;
                 session.user.role = token.role;
                 session.user.userName = token.userName;
                 session.user.firstName = token.firstName;
                 session.user.lastName = token.lastName;
+                session.user.gender = token.gender;
                 session.user.status = token.status; // ✅ Add status to session
 
             }

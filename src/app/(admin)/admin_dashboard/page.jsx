@@ -37,7 +37,6 @@ const page = () => {
             }
         });
 
-    console.log(data)
     return (
         <div className="p-6 md:p-10 space-y-6">
             <div className="flex flex-wrap justify-between items-center gap-3">

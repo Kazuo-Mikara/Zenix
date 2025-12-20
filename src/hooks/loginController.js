@@ -3,7 +3,7 @@
 import dbConnect from "@/lib/mongoose";
 import Users from "@/models/Users/User";
 import Admin from "@/models/Admin/Admin";
-import { signIn } from 'next-auth/react'
+
 
 export async function loginUser(provider, email, password) {
     try {
@@ -40,7 +40,6 @@ export async function loginUser(provider, email, password) {
             };
         }
 
-        // ✅ Check role for specific providers
         if (provider === 'student' && user.role !== 'student') {
             return {
                 success: false,
@@ -65,7 +64,6 @@ export async function loginUser(provider, email, password) {
             };
         }
 
-        // ✅ Check account status BEFORE attempting signIn
         if (user.status === 'inactive') {
             return {
                 success: false,

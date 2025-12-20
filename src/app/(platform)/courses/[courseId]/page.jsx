@@ -136,11 +136,10 @@ const course = ({ searchParams }) => {
                 // Fetch enrollment status IF logged in
                 if (session?.user?.id) {
                     const userEnrollments = await checkUserEnrollments(session?.user?.id);// Your API call here
-                    console.log(userEnrollments.enrolledCourses[1].courseId)
                     const enrolled = userEnrollments?.enrolledCourses.some(enrollment => {
                         return enrollment.courseId && enrollment.courseId._id && enrollment.courseId._id.toString() === courseId;
                     });
-                    
+
                     setIsEnrolled(enrolled);
                 } else {
                     setIsEnrolled(false); // Not logged in, not enrolled
@@ -156,7 +155,7 @@ const course = ({ searchParams }) => {
         loadCourseAndEnrollment();
         fetchCourse()
     }, [courseId, session?.user?.id, session?.user?.role, isEnrolling, isEnrolled]);
-    
+
     return (
 
         <main class="flex w-full flex-col items-center py-8 sm:py-12 lg:py-16">

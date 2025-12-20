@@ -16,6 +16,7 @@ import {
 
 export const title = "Profile Dropdown with Avatar";
 const ProfileDropDown = ({ name, email, image, onLogout, plan }) => {
+
   const handleLogoutClick = () => {
     // We use a check to ensure the prop was actually passed and is callable
     if (typeof onLogout === 'function') {

@@ -26,7 +26,7 @@ const levelDropdownMenu = ({ level, setLevel }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
                 <DropdownMenuLabel>Level</DropdownMenuLabel>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="border " />
                 <DropdownMenuRadioGroup onValueChange={setLevel} value={level}>
                     <DropdownMenuRadioItem value="Beginner">Beginner</DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="Intermediate">Intermediate</DropdownMenuRadioItem>

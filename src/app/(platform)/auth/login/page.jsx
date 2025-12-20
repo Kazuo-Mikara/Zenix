@@ -1,8 +1,12 @@
 'use client'
 import React, { useState, useRef } from 'react';
+import { useTheme } from '@/components/theme';
 import student_img from "../../../../../public/assets/anime_student.png"
+import google_img from "../../../../../public/assets/google.png"
 import MailIcon from '@mui/icons-material/Mail';
 import KeyIcon from '@mui/icons-material/Key';
+import GoogleIcon from '@mui/icons-material/Google';
+
 import Image from 'next/image';
 // import { NavLink, useNavigate } from 'react-router';
 import Link from 'next/link';
@@ -11,33 +15,41 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../../utils/(user)/UserAuthContext';
 import { signIn } from 'next-auth/react'
 import toast, { Toaster } from 'react-hot-toast';
-const loginpage = () => {
 
+const loginpage = () => {
+    const { theme } = useTheme()
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [message, setMessage] = useState(null);
     const loginForm = useRef();
     const router = useRouter();
+    const handleGoogleLogin = async () => {
+        const response = await signIn('google', {
+            callbackUrl: '/home',
+        });
+        console.log("Sign-in result:", response);
+        if (response.ok) {
+            setLoading(false);
+            router.push('/home');
+            router.refresh();
+        }
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const email = loginForm.current.email.value;
         const password = loginForm.current.password.value;
         try {
-            // ✅ Call server action that checks status BEFORE signIn
             const result = await loginUser('portal', email, password);
-
             console.log("Login result:", result);
-
             if (!result.success) {
-                // ✅ Display specific error message
                 toast.error(result.error);
                 setLoading(false);
                 return;
             }
             if (result.success) {
                 toast.success(result.message);
-
                 const response = await signIn('portal', {
                     email,
                     password,
@@ -45,9 +57,7 @@ const loginpage = () => {
                 });
                 console.log("Sign-in result:", response);
                 if (response.ok) {
-
                     setLoading(false);
-
                 }
             }
         } catch (err) {
@@ -61,92 +71,79 @@ const loginpage = () => {
     }
 
     return (
-        <>
+        <div className=" w-full h-screen flex items-center justify-center backdrop-blur-sm ">
+            <Toaster position="top-center" />
+            <div className="w-full max-w-6xl  bg-linear-to-br dark:bg-linear-to-br from-[#DCEAF4] dark:from-[#0B1D3A] to-[#F5EBD9] dark:to-[#619bbd] dark:bg-gray-900 rounded-2xl shadow-card overflow-hidden flex flex-col md:flex-row relative z-10 p-6 md:p-12">
+                <div className="w-full md:w-1/2 flex flex-col justify-center px-4 md:px-8 lg:px-12 py-8">
+                    <h1 className="text-2xl font-extrabold font-poppins md:text-3xl text-gray-600 dark:text-gray-100 text-center mb-2">Empower your learning with EduPath</h1>
+                    <h2 className="text-xl font-semibold font-poppins text-gray-600 dark:text-gray-100 text-center mb-8">Log In</h2>
 
-            <div className="p-10  bg-gradient-to-br w-full h-screen  flex items-center justify-center">
-                {/* White card container */}
-                <div className="bg-gray-200 rounded-lg shadow-xl flex flex-col md:flex-row w-full max-w-4xl items-center justify-center overflow-hidden">
+                    <button
+                        onClick={() => handleGoogleLogin()}
+                        className="w-full hover:cursor-pointer bg-white/60 font-poppins dark:bg-white/10 text-gray-700/70 hover:text-gray-700 dark:text-white font-medium py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-600 flex items-center justify-center gap-3 hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm mb-8"
+                    >
+                        <Image src="/assets/google.png" alt="Google" width={24} height={24} />
+                        Continue with Google
+                    </button>
 
-                    {/* Left Side: Form */}
-                    <div className="w-full md:w-1/2 p-2 md:p-12 flex flex-col justify-center">
-                        <h2 className="text-xl  text-gray-800 mb-6 text-center font-nunito">Empower your learning with EduPath</h2>
-                        <h2 className="text-xl  text-gray-800 mb-6 text-center font-nunito">Log In</h2>
-
-                        <form className="space-y-4" ref={loginForm} onSubmit={handleSubmit}>
-
-
-                            {/* Email Input */}
-                            <div className="relative">
-                                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-800">
-                                    {/* Email Icon */}
-                                    <MailIcon strokeWidth={3} fontSize='medium' />
-                                </span>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    className="w-full py-3 pl-10  outline-none pr-3 border-b-1 border-b-gray-800 placeholder-gray-400"
-                                    placeholder="Your Email"
-
-
-                                />
+                    <form ref={loginForm} onSubmit={handleSubmit}>
+                        <div className="mb-6 relative group">
+                            <div className="absolute inset-y-0 left-0 pl-0 flex items-center pointer-events-none">
+                                <MailIcon className="text-gray-500 group-focus-within:text-primary-400" />
                             </div>
+                            <input
+                                name="email"
+                                className="w-full py-2.5 pl-8 pr-4 bg-transparent border-b outline-0 border-gray-400 dark:border-gray-400 text-gray-600 dark:text-white placeholder-gray-600 dark:placeholder-gray-400 transition-colors"
+                                placeholder="Your Email"
+                                type="email"
+                                required
+                            />
+                        </div>
 
-                            {/* Password Input */}
-                            <div className="relative">
-                                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-800">
-                                    {/* Lock Icon */}
-                                    <KeyIcon size={15} fontSize='medium' />
-                                </span>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    className="w-full py-3 pl-10 pr-3 outline-none placeholder-gray-400 border-b-1 border-b-gray-800 "
-                                    placeholder="Password"
-                                />
+                        <div className="mb-6 relative group">
+                            <div className="absolute inset-y-0 left-0 pl-0 flex items-center pointer-events-none">
+                                <KeyIcon className="text-gray-500 group-focus-within:text-primary-400" />
                             </div>
+                            <input
+                                name="password"
+                                className="w-full py-2.5 pl-8 pr-4 bg-transparent border-0 border-b outline-0 border-gray-400 dark:border-gray-400 text-gray-600 dark:text-white placeholder-gray-600 dark:placeholder-gray-400 focus:ring-0 focus:border-primary transition-colors"
+                                placeholder="Password"
+                                type="password"
+                                required
+                            />
+                        </div>
 
-
-
-                            {/* Terms and Conditions Checkbox */}
-                            <div className="flex items-center">
-                                <input
-                                    id="terms"
-                                    type="checkbox"
-                                    required
-                                    className="h-4 w-4  border-gray-800 rounded  mr-2"
-                                />
-                                <label className="text-sm text-gray-800">
-                                    I agree all statements in <a href="#" className="text-[#8D6E42] hover:underline">Terms of service</a>
-                                </label>
+                        <div className="flex items-start mb-8">
+                            <div className="flex items-center h-5">
+                                <input className="custom-checkbox w-4 h-4 border border-gray-200 rounded bg-transparent focus:ring-primary text-primary cursor-pointer" id="terms" type="checkbox" required />
                             </div>
+                            <label className="ml-2 text-sm text-gray-600 dark:text-gray-400" htmlFor="terms">
+                                I agree all statements in <a className="text-primary-500 dark:text-gray-300 hover:underline" href="#">Terms of service.</a>
+                            </label>
+                        </div>
 
-                            {/* Register Button */}
-                            <button
-                                type="submit"
-                                className="w-full py-3 px-4 bg-[#8D6E42] text-white font-semibold rounded-md hover:opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-20 shadow-md"
-                            >
-                                Sign In
-                            </button>
-                        </form>
+                        <button type="submit" className="w-full bg-primary-500 hover:bg-primary-700 text-white font-medium py-3 rounded-lg shadow-md transition-colors mb-6">
+                            Sign In
+                        </button>
+                    </form>
 
-                        {/* "Already member" link */}
-                        <p className="text-sm text-gray-800 mt-6 text-center">
-                            New User? {' '}
-                            <Link href="/auth/signup" className="text-[#8D6E42] hover:underline font-medium">
-                                Sign Up
-                            </Link>
-                        </p>
+                    <div className="text-center text-sm dark:text-[#FDF6E3] font-medium text-gray-400">
+                        Don't have an account ? <Link className="font-medium hover:underline text-[#a0780c] dark:text-[#f1d178]" href="/auth/signup">Sign Up</Link>
                     </div>
-
-                    {/* Right Side: Image */}
-                    <div>
-                        <Image src={student_img} alt="Sign In" className="w-[500px] h-[400px] object-cover p-12" />
-                    </div>
-
                 </div>
 
+                <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8">
+                    <div className="w-full h-full min-h-[300px] md:min-h-[400px] rounded-2xl overflow-hidden shadow-lg relative bg-[#e8e4dc] transition-discrete">
+                        {theme === 'dark' ? (
+                            <div className="w-full h-full bg-center bg-cover" style={{ backgroundImage: "url('/assets/dark_cosmic_library_scene.png')", backgroundPosition: "center " }}></div>
+                        ) : (
+                            <div className="w-full h-full bg-center bg-cover" style={{ backgroundImage: "url('/assets/light_cosmic_library_scene.png')", backgroundPosition: "center " }}></div>
+                        )}
+                        <div className="absolute inset-0 bg-orange-100 mix-blend-multiply opacity-30 pointer-events-none"></div>
+                    </div>
+                </div>
             </div>
-        </>
+        </div>
     )
 }
 
